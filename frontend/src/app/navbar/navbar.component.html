@@ -1,0 +1,29 @@
+<header>
+  <div class="container mx-auto px-4 py-3">
+    <nav class="grid grid-cols-12 items-center">
+
+      <div class="col-span-8 md:col-span-3 flex items-center space-x-3">
+        <img src="/assets/images/logo.png" alt="Logo" class="w-12 h-12 object-contain">
+        <span class="font-bold text-xl">Cue Frenzy</span>
+      </div>
+      
+      <ul class="hidden md:flex md:col-span-6 items-center justify-center space-x-6">
+        <li><a class="button" [routerLink]="'/'" [routerLinkActive]="'active'">Play</a></li>
+        <li><a class="button" [routerLink]="'rankings'" [routerLinkActive]="'active'">Rankings</a></li>
+      </ul>
+      
+      <!--
+        User Profile Section
+        <div class="hidden md:flex md:col-span-3 items-center justify-end">
+          <div class="flex items-center bg-black/30 px-4 py-2 rounded cursor-pointer">
+            <div class="w-8 h-8 rounded-full overflow-hidden mr-2">
+              <img src="/assets/images/default_avatar.jpg" alt="Profile" class="w-full h-full object-cover">
+            </div>
+            <span class="text-white font-bold">Gigel</span>
+          </div>
+        </div>
+      -->
+
+    </nav>
+  </div>
+</header>

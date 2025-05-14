@@ -1,0 +1,21 @@
+
+<div class = "h-[80vh]">
+  
+  <div class = "w-full flex flex-wrap items-center justify-center p-2" [ngClass]="{'hidden': !loaded}">
+    <canvas #canvasRef (click)="onClick($event)" (mousemove)="onMouseMove($event)" class="cursor-none"></canvas>
+    <div class = "w-full items-center justify-center mt-2 text-center">
+      Power: {{ this.power | number:'1.0-0' }}%
+    </div>
+  </div>
+
+  @if (!loaded) {
+    <div class = "w-full h-full flex items-center justify-center p-2">
+      <div class="flex flex-col items-center">
+        <div class="loader"></div>
+        <p class="text-white text-lg mt-2">
+          Loading ...
+        </p>
+      </div>
+    </div>
+  }
+</div>

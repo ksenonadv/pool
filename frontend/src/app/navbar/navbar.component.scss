@@ -1,0 +1,11 @@
+.button {
+  @apply text-white font-medium transition-colors duration-200 px-4 py-2 rounded bg-black/20 hover:bg-black/30 hover:text-blue-600;
+
+  &.active {
+    @apply text-blue-600 bg-black/30;
+  }
+}
+
+header {
+  @apply bg-blue-950 shadow border-b border-blue-900;
+}
