@@ -3,7 +3,6 @@ import { Request } from 'express';
 import { AccessTokenGuard } from 'src/guards/accessToken.guard';
 import { UsersService } from 'src/services/users.service';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
-import axios from 'axios';
 import { ChangeAvatarDto, ChangeNameDto, ChangePasswordDto } from 'src/dto/user.dto';
 
 @Controller('user')
