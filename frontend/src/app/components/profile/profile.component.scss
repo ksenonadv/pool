@@ -9,3 +9,7 @@ input[type="text"], input[type="password"] {
 button {
     @apply mt-2 w-full py-2 px-4 bg-blue-950 text-white rounded hover:bg-blue-900 disabled:hover:bg-blue-950 disabled:opacity-50;
 }
+
+.error {
+    @apply text-red-600 text-sm mt-1;
+}

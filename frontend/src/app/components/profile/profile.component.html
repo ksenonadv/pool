@@ -38,6 +38,9 @@
                             type="text"
                             formControlName="username" 
                         />
+                        <div *ngIf="usernameChangeForm.get('username')?.invalid && usernameChangeForm.get('username')?.touched" class="error">
+                            <span *ngIf="usernameChangeForm.get('username')?.errors?.['required']">Username is required.</span>
+                        </div>
                     </div>
                     <button 
                         type="submit" 
@@ -57,6 +60,9 @@
                                 type="password" 
                                 formControlName="currentPassword" 
                             />
+                            <div *ngIf="passwordChangeForm.get('currentPassword')?.invalid && passwordChangeForm.get('currentPassword')?.touched" class="error">
+                                <span *ngIf="passwordChangeForm.get('currentPassword')?.errors?.['required']">Current password is required.</span>
+                            </div>
                         </div>
                         <div>
                             <label>New Password</label>
@@ -64,6 +70,10 @@
                                 type="password" 
                                 formControlName="password" 
                             />
+                            <div *ngIf="passwordChangeForm.get('password')?.invalid && passwordChangeForm.get('password')?.touched" class="error">
+                                <span *ngIf="passwordChangeForm.get('password')?.errors?.['required']">New password is required.</span>
+                                <span *ngIf="passwordChangeForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters long.</span>
+                            </div>
                         </div>
                         <div>
                             <label>Confirm Password</label>
@@ -71,6 +81,10 @@
                                 type="password" 
                                 formControlName="confirmPassword" 
                             />
+                            <div *ngIf="passwordChangeForm.get('confirmPassword')?.invalid && passwordChangeForm.get('confirmPassword')?.touched" class="error">
+                                <span *ngIf="passwordChangeForm.get('confirmPassword')?.errors?.['required']">New password is required.</span>
+                                <span *ngIf="passwordChangeForm.get('confirmPassword')?.errors?.['passwordMismatch']">Passwords do not match.</span>
+                            </div>
                         </div>
                         <button 
                             type="submit" 

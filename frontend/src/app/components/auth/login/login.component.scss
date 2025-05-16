@@ -14,6 +14,7 @@ button {
     @apply w-full py-2 px-4 text-white font-semibold rounded-lg shadow-md transition disabled:cursor-not-allowed;
 }
 
+
 .error {
     @apply text-red-600 text-sm mt-1;
 }
