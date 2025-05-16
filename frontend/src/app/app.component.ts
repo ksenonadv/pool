@@ -1,13 +1,19 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from "./navbar/navbar.component";
+import { Toast } from 'primeng/toast'
+import { NavbarComponent } from "./components/navbar/navbar.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  imports: [RouterOutlet, NavbarComponent, Toast],
+  template: `
+    <div class="min-h-screen flex flex-col bg-[#041024] font-sans">
+      <app-navbar></app-navbar>
+      <main class="flex-grow container mx-auto px-4 py-8">
+        <router-outlet></router-outlet>
+      </main>  
+      <p-toast position="bottom-right"></p-toast>
+    </div>
+  `
 })
-export class AppComponent {
-  title = 'frontend';
-}
+export class AppComponent { }

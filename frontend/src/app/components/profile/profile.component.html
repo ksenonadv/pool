@@ -1,0 +1,86 @@
+<div class="min-h-screen py-8 px-4">
+    <div class="max-w-md mx-auto bg-white/5 rounded-lg shadow-md overflow-hidden">
+        <div class="bg-blue-950 p-6 text-white">
+            <h2 class="text-2xl font-bold">Your Profile</h2>
+        </div>
+        
+        <div class="p-6 space-y-6">
+            
+            <div class="flex flex-col items-center space-y-4 group">
+                <input 
+                    #fileInput
+                    type="file" 
+                    (change)="changeAvatar($event)" 
+                    accept="image/*"
+                    class="hidden"
+                />
+                <div class="relative w-24 h-24 cursor-pointer group relative" (click)="fileInput.click()">
+                    <img 
+                        [src]="avatar" 
+                        alt="Avatar" 
+                        class="w-24 h-24 rounded-full object-cover border-4 border-blue-950"
+                    />
+                    <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <fa-icon 
+                            [icon]="['fas', 'camera']" 
+                            class="text-white text-2xl"
+                        ></fa-icon>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Username form -->
+            <div class="pt-4"> <!-- border-t border-gray-200 -->
+                <form [formGroup]="usernameChangeForm" (ngSubmit)="changeUsername()" class="space-y-4">
+                    <div>
+                        <label>Username</label>
+                        <input 
+                            type="text"
+                            formControlName="username" 
+                        />
+                    </div>
+                    <button 
+                        type="submit" 
+                        [disabled]="usernameChangeForm.invalid || loading" 
+                    >
+                        Change Username
+                    </button>
+                </form>
+            </div>
+
+            @if (!hideChangePassword) {
+                <div class="pt-4 border-t border-gray-200">
+                    <form [formGroup]="passwordChangeForm" (ngSubmit)="changePassword()" class="space-y-4">
+                        <div>
+                            <label>Current Password</label>
+                            <input 
+                                type="password" 
+                                formControlName="currentPassword" 
+                            />
+                        </div>
+                        <div>
+                            <label>New Password</label>
+                            <input 
+                                type="password" 
+                                formControlName="password" 
+                            />
+                        </div>
+                        <div>
+                            <label>Confirm Password</label>
+                            <input 
+                                type="password" 
+                                formControlName="confirmPassword" 
+                            />
+                        </div>
+                        <button 
+                            type="submit" 
+                            [disabled]="passwordChangeForm.invalid || loading" 
+                        >
+                            Change Password
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</div>

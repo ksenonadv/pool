@@ -7,10 +7,18 @@ import { providePrimeNG } from 'primeng/config';
 import Material from '@primeng/themes/material';
 
 import { SocketIoConfig, provideSocketIo, Socket, SOCKET_CONFIG_TOKEN } from 'ngx-socket-io';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './interceptors/auth.interceptor';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideHttpClient(
+      withInterceptors(
+        [authInterceptor]
+      )
+    ),
     provideSocketIo({
       url: 'http://localhost:3000',
     } as SocketIoConfig),
@@ -27,6 +35,7 @@ export const appConfig: ApplicationConfig = {
         preset: Material
       }
     }),
-    provideRouter(routes)
+    provideRouter(routes),
+    MessageService
   ]
 };

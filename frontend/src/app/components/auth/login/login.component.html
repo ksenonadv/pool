@@ -1,0 +1,44 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+  <img src="/assets/images/logo.png" alt="Logo" class="w-32 mx-auto mb-4">
+  
+  <div>
+    <label for="username">Your username</label>
+    <input id="username" formControlName="username"/>
+    <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="error">
+      <span *ngIf="loginForm.get('username')?.errors?.['required']">Username is required.</span>
+    </div>
+  </div>
+  <div>
+    <label for="password">Your password</label>
+    <input id="password" type="password" formControlName="password"/>
+    <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error">
+      <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required.</span>
+    </div>
+  </div>
+
+  <div class="w-full">
+    <button 
+      type="submit"
+      class="bg-blue-600 hover:bg-blue-700"
+      [disabled]="loginForm.invalid"
+    >
+      <fa-icon [icon]="['fas', 'key']" class = "mr-1"></fa-icon>
+      Login
+    </button>
+    <button 
+      type="button"
+      class="bg-violet-600 hover:bg-violet-700 mt-2"
+      (click)="loginWithDiscord()"
+    >  
+      <fa-icon [icon]="['fab', 'discord']" class = "mr-1"></fa-icon>
+      <span>Login with Discord</span>
+    </button>
+  </div>
+
+  <div class="mt-4 text-center">
+    <span>Don't have an account? </span>
+    <a routerLink="/register" class="text-blue-600 hover:underline cursor-pointer">Click to register</a>
+  </div>
+
+</form>

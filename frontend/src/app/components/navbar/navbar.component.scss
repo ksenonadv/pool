@@ -9,3 +9,11 @@
 header {
   @apply bg-blue-950 shadow border-b border-blue-900;
 }
+
+.dropdown {
+  @apply absolute top-full right-0 mt-1 w-48 bg-blue-950 rounded shadow-lg z-10;
+
+  .button {
+    @apply block px-4 py-2 text-white hover:bg-white/10 cursor-pointer
+  }
+}

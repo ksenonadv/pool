@@ -1,0 +1,45 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+  <img src="/assets/images/logo.png" alt="Logo" class="w-32 mx-auto mb-4">
+  
+  <div>
+    <label for="username">Your username</label>
+    <input id="username" formControlName="username"/>
+    <div *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="error">
+      <span *ngIf="registerForm.get('username')?.errors?.['required']">Username is required.</span>
+    </div>
+  </div>
+  <div>
+    <label for="password">Your password</label>
+    <input id="password" type="password" formControlName="password"/>
+    <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error">
+      <span *ngIf="registerForm.get('password')?.errors?.['required']">Password is required.</span>
+      <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters long.</span>
+    </div>
+  </div>
+  <div>
+    <label for="confirmPassword">Confirm password</label>
+    <input id="confirmPassword" type="password" formControlName="confirmPassword"/>
+    <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="error">
+      <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Password is required.</span>
+      <span *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']">Passwords do not match.</span>
+    </div>
+  </div>
+
+  <div class="w-full">
+    <button 
+      type="submit"
+      class="bg-blue-600 hover:bg-blue-700"
+      [disabled]="registerForm.invalid"
+    >
+      <fa-icon [icon]="['fas', 'key']" class = "mr-1"></fa-icon>
+      Register
+    </button>
+  </div>
+
+  <div class="mt-4 text-center">
+    <span>Already have an account? </span>
+    <a routerLink="/login" class="text-blue-600 hover:underline cursor-pointer">Click to login</a>
+  </div>
+
+</form>
