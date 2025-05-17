@@ -1,12 +1,12 @@
-<div class="w-full h-[400px] flex flex-col ml-4 border border-blue-950 rounded-md overflow-hidden">
+<div class="w-full h-[480px] flex flex-col ml-4 border border-blue-950 rounded-md overflow-hidden">
   
   <div class="bg-blue-500 text-white p-3 font-bold">
     Chat
   </div>
 
-  <div class="flex-1 p-4 overflow-y-auto max-h-[350px] bg-black/5">
+  <div #scrollContainer class="flex-1 p-4 overflow-y-auto max-h-[360px] bg-black/5">
     @for(message of messages; track message.date) {
-      <div class="mb-4" [ngClass]="{'text-right': message.my}">
+      <div class="mb-4" [ngClass]="{ 'text-right': message.my }" #chatMessages>
         <div 
           class="rounded-lg p-3 shadow max-w-[80%] inline-block"
           [ngClass]="{

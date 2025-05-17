@@ -1,5 +1,6 @@
 import { Bodies } from "matter-js";
-import { BALL_NUMBERS, BALL_RADIUS, BALL_SPACING, CUE_BALL_POSITION_X, CUE_BALL_POSITION_Y, RACK_ORIGIN_X, RACK_ORIGIN_Y, TABLE_HEIGHT, TABLE_PADDING, TABLE_WIDTH, WALL_THICKNESS } from "./config/constants/pool.constants";
+import { BALL_NUMBERS, BALL_RADIUS, BALL_SPACING, CUE_BALL_POSITION_X, CUE_BALL_POSITION_Y, RACK_ORIGIN_X, RACK_ORIGIN_Y, TABLE_HEIGHT, TABLE_PADDING, TABLE_WIDTH, WALL_THICKNESS } from 'src/config/constants/pool.constants';
+import { BallGroup } from "@shared/game.types";
 
 declare global {
   namespace Matter {
@@ -96,22 +97,26 @@ export function createPoolTableBalls() {
   }
 
   balls.add(
-    Bodies.circle(
-      CUE_BALL_POSITION_X,
-      CUE_BALL_POSITION_Y,
-      BALL_RADIUS,
-      {
-        label: 'cue_ball',
-        ballNumber: 0,
-        restitution: 0.8,
-        friction: 0,
-        frictionAir: 0.02
-      }
-    )
+    createCueBall()
   );
 
   return Array.from(
     balls
+  );
+}
+
+export function createCueBall() {
+  return Bodies.circle(
+    CUE_BALL_POSITION_X,
+    CUE_BALL_POSITION_Y,
+    BALL_RADIUS,
+    {
+      label: 'cue_ball',
+      ballNumber: 0,
+      restitution: 0.8,
+      friction: 0,
+      frictionAir: 0.02
+    }
   );
 }
 
@@ -121,4 +126,16 @@ export function createPoolTableEngineEntities() {
     pockets: createPoolTablePockets(),
     balls: createPoolTableBalls()
   };
+}
+
+export function getBallGroup(number: number): BallGroup {
+  
+  if (number >= 1 && number <= 7)
+    return BallGroup.SOLIDS;
+  else if (number >= 9 && number <= 15)
+    return BallGroup.STRIPES;
+  else if (number === 8)
+    return BallGroup.EIGHT;
+  
+  return BallGroup.NONE; 
 }

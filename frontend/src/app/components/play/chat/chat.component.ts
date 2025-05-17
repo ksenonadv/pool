@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, Input, OnChanges, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatMessage } from '@shared/socket.types';
 import { ConnectionState } from 'src/app/interfaces/connection-state';
@@ -12,7 +12,7 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
-export class ChatComponent {
+export class ChatComponent implements OnChanges {
 
   private readonly service: PoolService = inject(PoolService);
   private readonly userService: UserService = inject(UserService);
@@ -20,6 +20,12 @@ export class ChatComponent {
   
   @Input()
   public state: ConnectionState = ConnectionState.Disconnected;
+
+  @ViewChild('scrollContainer', { static: false })
+  public scrollContainer: ElementRef<HTMLDivElement> = undefined!;
+
+  @ViewChildren('chatMessages')
+  public chatMessages: QueryList<any> = undefined!;
 
   public messages: Array<ChatMessage & { my: boolean }> = [];
   public input: string = '';
@@ -40,10 +46,19 @@ export class ChatComponent {
     this.service.messages$().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe((message) => {
+      
       this.messages.push({
         ...message,
         my: message.name == this.my_name
       });
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.chatMessages.changes.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      this.scrollToBottom();
     });
   }
 
@@ -61,6 +76,24 @@ export class ChatComponent {
 
   public get canSend(): boolean {
     return this.state == ConnectionState.InGame;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['state'] && changes['state'].previousValue == ConnectionState.InGame && changes['state'].currentValue == ConnectionState.InWaitingRoom) {
+      this.messages = [];
+    }
+  }
+
+  private scrollToBottom() {
+    
+    if (!this.scrollContainer)
+      return;
+
+    this.scrollContainer.nativeElement.scroll({
+      top: this.scrollContainer.nativeElement.scrollHeight,
+      left: 0
+    });
+
   }
 
 }

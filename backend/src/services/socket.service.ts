@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { WsException } from "@nestjs/websockets";
-import { ChatMessage, ClientGameEvent, ClientGameEventData, ConnectionStateEventData, SocketEvent } from "@shared/socket.types";
+import { ChatMessage, ClientGameEventData, ConnectionStateEventData, SocketEvent } from "@shared/socket.types";
 import { Server, Socket } from "socket.io";
 import { UsersService } from "./users.service";
 import { POOL_GAME_MIN_PLAYERS, WAITING_ROOM_ID } from "src/config/constants/pool.constants";
-import { Game } from "src/game";
+import { Game } from "src/game/game";
 
 @Injectable()
 export class SocketService {
@@ -47,7 +47,6 @@ export class SocketService {
     // Join the waiting room.
     await this.addToWaitingRoom(client);
   }
-
   public async onDisconnect(client: Socket) {
 
     const userId = this.socketToUserId.get(
@@ -60,8 +59,9 @@ export class SocketService {
     this.userIdToSocket.delete(userId);
     this.socketToUserId.delete(client.id);
 
-    // Remove from current room.
-    this.socketToRoomId.delete(client.id);
+    this.removeFromRoom(
+      client
+    );
   }
 
   private setRoom(client: Socket, roomId: string) {
@@ -74,6 +74,73 @@ export class SocketService {
       roomId
     );
   }
+
+  private removeFromRoom(client: Socket) {
+
+    // Clean up any game the user was in
+    
+    const roomId = this.socketToRoomId.get(client.id);
+    
+    if (roomId && roomId !== WAITING_ROOM_ID) {
+      
+      const game = [...this.games].find((game) => game.id === roomId);
+      
+      if (game) {
+        
+        game.cleanup();
+
+        this.games.delete(
+          game
+        );
+
+        this.onGameEnd(
+          game
+        );
+      }
+    }
+
+    // Remove from current room.
+    this.socketToRoomId.delete(
+      client.id
+    );
+  }
+
+  public onGameEnd(game: Game) {
+
+    const gameId = game.id;
+
+    if (this.games.has(game)) {
+      this.games.delete(
+        game
+      );
+
+      game.cleanup();
+    }
+
+
+    this.server.in(
+      WAITING_ROOM_ID
+    ).fetchSockets().then((sockets) => {
+
+      sockets.forEach((socket) => {
+
+        this.socketToRoomId.delete(
+          socket.id
+        );
+
+        socket.leave(
+          gameId
+        );
+
+        this.addToWaitingRoom(
+          socket as unknown as Socket
+        );
+      });
+
+    });
+
+  }
+
 
   private async addToWaitingRoom(client: Socket) {
 
@@ -92,20 +159,7 @@ export class SocketService {
       `Welcome to the waiting room.<br>Please wait for more players to join.`
     );
 
-    const { username } = await this.getUserFromSocket(
-      client
-    );
-
-    this.server.to(WAITING_ROOM_ID).emit(
-      SocketEvent.CHAT_MESSAGE,
-      {
-        name: 'System',
-        text: `${username} has joined.`,
-        date: new Date()
-      } as ChatMessage
-    );
-
-    this.attemptToStartGame();
+    await this.attemptToStartGame();
   }
 
   public async onChatMessage(client: Socket, message: string) {
@@ -170,6 +224,12 @@ export class SocketService {
         player2 as unknown as Socket
       )
     ]);
+
+    game.addEndGameCallback(() => {
+      this.onGameEnd(
+        game
+      );
+    });
 
     this.games.add(
       game

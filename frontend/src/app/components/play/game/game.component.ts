@@ -1,22 +1,26 @@
-import { Component, DestroyRef, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { ConnectionState } from 'src/app/interfaces/connection-state';
 import { GAME_IMAGES_ASSETS } from './assets';
-import { MIN_POWER } from '@shared/game.types';
+import { BallGroup, MIN_POWER } from '@shared/game.types';
 import { PoolService } from 'src/app/services/pool.service';
-import { Ball, ClientGameEvent, ServerEvent, ServerGameEventData, SocketEvent, SyncCueEventData } from '@shared/socket.types';
+import { Ball, BallPocketedEventData, ClientGameEvent, ServerEvent, ServerGameEventData, SetBallGroupEventData, SetPlayersEventData, SocketEvent, SyncCueEventData } from '@shared/socket.types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SharedModule } from 'src/app/modules/shared.module';
+import { UserService } from 'src/app/services/user.service';
+import { PlayersComponent } from './players/players.component';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss',
-  imports: [SharedModule]
+  imports: [SharedModule, PlayersComponent]
 })
 export class GameComponent implements OnInit {
 
+  private readonly userService: UserService = inject(UserService);
   private readonly service: PoolService = inject(PoolService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Input()
   public state: ConnectionState = ConnectionState.Disconnected;
@@ -39,10 +43,17 @@ export class GameComponent implements OnInit {
 
   private balls: Array<Ball> = [];
 
-  private canShoot: boolean = false;
+  public canShoot: boolean = false;
   private ballsMoving: boolean = false;
 
   private cueData: SyncCueEventData | undefined = undefined;
+
+  public players: SetPlayersEventData = [];
+
+  public userId: string = undefined!;
+
+  public stripesPocketed: Array<number> = [];
+  public solidsPocketed: Array<number> = [];
 
   ngOnInit(): void {
     
@@ -60,6 +71,14 @@ export class GameComponent implements OnInit {
       '2d'
     );
 
+    this.userService.user$.subscribe((user) => {
+
+      if (!user)
+        return;
+
+      this.userId = user.userId;
+    });
+
     this.service.fromEvent<ServerGameEventData, SocketEvent.SERVER_GAME_EVENT>(SocketEvent.SERVER_GAME_EVENT).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe((data) => {
@@ -67,12 +86,31 @@ export class GameComponent implements OnInit {
       const { event, data: payload } = data;
 
       switch (event) {
+        case ServerEvent.SET_PLAYERS: {
+          this.players = payload as SetPlayersEventData;
+          break;
+        }
+        case ServerEvent.SET_BALL_GROUP: {
+          
+          for (let [userId, group] of Object.entries(payload as SetBallGroupEventData)) {
+            
+            const player = this.players.find((player) => player.userId === userId);
+
+            if (player) {
+              player.group = group;
+            }
+          }
+
+          this.cdr.detectChanges();
+          break;
+        }
         case ServerEvent.UPDATE_BALLS: {
           this.balls = payload as Array<Ball>;
           break;
         }
         case ServerEvent.SET_CAN_SHOOT: {
           this.canShoot = payload as boolean;
+          this.cdr.detectChanges();
           break;
         }
         case ServerEvent.SYNC_CUE: {
@@ -85,6 +123,32 @@ export class GameComponent implements OnInit {
         }
         case ServerEvent.MOVEMENT_END: {
           this.ballsMoving = false;
+          break;
+        }
+        case ServerEvent.BALL_POCKETED: {
+
+          const { ball, group } = payload as BallPocketedEventData;
+
+          if (group == BallGroup.STRIPES) {
+            this.stripesPocketed.push(
+              ball
+            );
+          } else if (group == BallGroup.SOLIDS) {
+            this.solidsPocketed.push(
+              ball
+            );
+          }
+
+          break
+        }
+        case ServerEvent.GAME_OVER: {
+          this.balls = [];
+          this.players = [];
+          this.stripesPocketed = [];
+          this.solidsPocketed = [];
+          this.canShoot = false;
+          this.canvas.nativeElement.width = 800;
+          this.canvas.nativeElement.height = 400;
           break;
         }
       }
@@ -228,5 +292,4 @@ export class GameComponent implements OnInit {
 
     this.ctx!.restore();
   }
-
 }

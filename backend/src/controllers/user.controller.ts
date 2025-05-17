@@ -23,6 +23,7 @@ export class UserController {
         const { username, avatar, discordId } = user;
 
         return {
+            userId: req.user.userId,
             username,
             avatar,
             discordId

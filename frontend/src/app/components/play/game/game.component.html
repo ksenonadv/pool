@@ -1,5 +1,14 @@
-<div class = "w-[800px] h-[400px] relative">
+<div class = "w-[800px] h-[480px] relative">
   
+  <app-players 
+    *ngIf="state == ConnectionState.InGame"
+    [players]="players" 
+    [canShoot]="canShoot" 
+    [userId]="userId" 
+    [stripes]="stripesPocketed"
+    [solids]="solidsPocketed"
+  ></app-players>
+
   <canvas 
     #canvasRef 
     (click)="onClick()" 
@@ -8,7 +17,7 @@
   ></canvas>
 
   @if (state !== ConnectionState.InGame) {
-    <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black/70 rounded-3xl">
+    <div class="absolute top-0 left-0 w-[800px] h-[400px] flex items-center justify-center bg-black/70 rounded-3xl">
       <div class="text-center text-2xl">
         <fa-icon [icon]="['fas', 'spinner']" class="text-4xl" [animation]="'spin'" /> <br>
         @if (state === ConnectionState.Disconnected) {

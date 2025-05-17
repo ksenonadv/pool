@@ -2,6 +2,8 @@
  * Socket events types enum
  */
 
+import { BallGroup } from "./game.types";
+
 export enum SocketEvent {
 
   JOIN = 'join', // Join event. (Used by client to authenticate)
@@ -25,16 +27,20 @@ export type ClientGameEventData = {
 };
 
 export enum ServerEvent {
+  SET_PLAYERS = 'set-players-data',
   SET_CAN_SHOOT = 'set-can-shoot',
   UPDATE_BALLS = 'update-balls',
   SYNC_CUE = 'sync-cue',
   MOVEMENT_START = 'movement-start',
   MOVEMENT_END = 'movement-end',
+  SET_BALL_GROUP = 'set-ball-group',
+  GAME_OVER = 'game-over',
+  BALL_POCKETED = 'ball-pocketed',
 };
 
 export type ServerGameEventData = {
   event: ServerEvent;
-  data: Array<Ball> | boolean | SyncCueEventData;
+  data: SetPlayersEventData | Array<Ball> | boolean | SyncCueEventData | string | SetBallGroupEventData | undefined | BallPocketedEventData;
 };
 
 export const enum ConnectionStateEventData {
@@ -63,4 +69,18 @@ export type Ball = {
     y: number;
   };
   angle: number;
+};
+
+export type SetPlayersEventData = Array<{
+  userId: string;
+  name: string;
+  avatar: string;
+  group?: BallGroup;
+}>;
+
+export type SetBallGroupEventData = Record<string, BallGroup>;
+
+export type BallPocketedEventData = {
+  ball: number;
+  group: BallGroup;
 };
