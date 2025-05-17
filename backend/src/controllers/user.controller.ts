@@ -17,7 +17,7 @@ export class UserController {
     async getMe(@Req() req: Request) {
 
         const user = await this.userService.findById(
-            req.user['sub']
+            req.user.userId
         );
 
         const { username, avatar, discordId } = user;
@@ -62,7 +62,7 @@ export class UserController {
 
             const imageUrl = response.data.link;
 
-            await this.userService.update(req.user['sub'], {
+            await this.userService.update(req.user.userId, {
                 avatar: imageUrl
             });
 
@@ -93,7 +93,7 @@ export class UserController {
         }
 
         const user = await this.userService.findById(
-            req.user['sub']
+            req.user.userId
         );
 
         if (!user) {
@@ -122,7 +122,7 @@ export class UserController {
         }
 
         await this.userService.changePassword(
-            req.user['sub'], 
+            req.user.userId, 
             body
         );
 

@@ -27,15 +27,15 @@ export class AuthController {
   @UseGuards(AccessTokenGuard)
   @Get('logout')
   logout(@Req() req: Request) {
-    this.authService.logout(req.user['sub']);
+    this.authService.logout(req.user.userId);
   }
 
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
   refreshTokens(@Req() req: Request) {
     
-    const userId = req.user['sub'];
-    const refreshToken = req.user['refreshToken'];
+    const userId = req.user.userId;
+    const refreshToken = req.user.refreshToken;
     
     return this.authService.refreshTokens(
       userId, 
@@ -54,7 +54,7 @@ export class AuthController {
   @UseGuards(AuthGuard('discord'))
   async discordCallback(@Req() req: Request, @Res() res: Response) {
     
-    const user = req.user as User;
+    const user = req.user as Partial<User>;
     const tokens = await this.authService.getTokens(user.id, user.username);
     await this.authService.updateRefreshToken(user.id, tokens.refreshToken);
     

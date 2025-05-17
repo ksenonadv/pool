@@ -1,10 +1,9 @@
-import { WebSocketGateway, WebSocketServer, SubscribeMessage, OnGatewayDisconnect, ConnectedSocket, WsException } from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, OnGatewayDisconnect, ConnectedSocket, WebSocketServer, OnGatewayInit, MessageBody } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { UsersService } from 'src/services/users.service';
 import { WsJwtGuard } from 'src/guards/wsAuth.guard';
+import { SocketService } from 'src/services/socket.service';
+import { ClientGameEventData, SocketEvent } from '@shared/socket.types';
 
 @WebSocketGateway({
   namespace: 'pool',
@@ -12,53 +11,68 @@ import { WsJwtGuard } from 'src/guards/wsAuth.guard';
     origin: '*',
   }
 })
-export class PoolGateway implements OnGatewayDisconnect {
+export class PoolGateway implements OnGatewayInit, OnGatewayDisconnect {
   
-  @WebSocketServer()
-  private server: Server;
-
-  // Map containing database userId and their socket.
-  private readonly users: Map<string, Socket> = new Map();
-
-  // Map containing socketId and their database userId.
-  private readonly sockets: Map<string, string> = new Map();
-
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
-    private readonly usersService: UsersService
+    private readonly socketService: SocketService,
   ) { }
 
+  afterInit(server: Server) {
+    this.socketService.setServer(
+      server
+    );
+  }
+
   handleDisconnect(client: Socket) {
-    // Remove the user from the users map
-    const userId = this.sockets.get(client.id);
-    if (userId) {
-      this.users.delete(userId);
-      this.sockets.delete(client.id);
+    this.socketService.onDisconnect(
+      client
+    );
+  }
+
+  @UseGuards(WsJwtGuard)
+  @SubscribeMessage(SocketEvent.JOIN)
+  async handleJoin(@ConnectedSocket() client: Socket) {
+    try {
+      this.socketService.onJoin(
+        client
+      );
+    } catch(error) {
+      client.disconnect(
+        true
+      );
     }
   }
 
   @UseGuards(WsJwtGuard)
-  @SubscribeMessage('joinWaitingRoom')
-  joinWaitingRoom(@ConnectedSocket() client: Socket) {
-
-    const userId = client['user'].sub;
-
-    // Check if the user is already connected to the pool gateway.
-    if (this.users.has(userId)) {
-      throw new WsException(
-        'You are already connected to the pool gateway.'
-      );
-    }
-
-    this.users.set(
-      userId,
-      client
+  @SubscribeMessage(SocketEvent.CHAT_MESSAGE)
+  async handleChatMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() 
+    message: string
+  ) {
+    this.socketService.onChatMessage(
+      client,
+      message
     );
+  }
 
-    this.sockets.set(
-      client.id,
-      userId
+  @UseGuards(WsJwtGuard)
+  @SubscribeMessage(SocketEvent.CLIENT_GAME_EVENT)
+  async handleClientGameEvent(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() 
+    data: ClientGameEventData
+  ) {
+
+    const { event, data: payload } = data;
+
+    if (!event || payload === undefined)
+      return;
+
+    this.socketService.processGameEvent(
+      client,
+      event,
+      payload
     );
   }
 }

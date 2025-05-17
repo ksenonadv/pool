@@ -3,8 +3,16 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 type JwtPayload = {
-  sub: string;
-  username: string;
+  userId: string;
+};
+
+declare global {
+  namespace Express {
+    interface User {
+      userId: string;
+      refreshToken: string;
+    }
+  }
 };
 
 @Injectable()

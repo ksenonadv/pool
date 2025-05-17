@@ -1,0 +1,1 @@
+export const MIN_POWER = 15;

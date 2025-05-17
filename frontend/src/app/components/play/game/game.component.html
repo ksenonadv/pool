@@ -1,0 +1,34 @@
+<div class = "w-[800px] h-[400px] relative">
+  
+  <canvas 
+    #canvasRef 
+    (click)="onClick()" 
+    (mousemove)="onMouseMove($event)" 
+    class="cursor-none w-[800px] h-[400px]"
+  ></canvas>
+
+  @if (state !== ConnectionState.InGame) {
+    <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black/70 rounded-3xl">
+      <div class="text-center text-2xl">
+        <fa-icon [icon]="['fas', 'spinner']" class="text-4xl" [animation]="'spin'" /> <br>
+        @if (state === ConnectionState.Disconnected) {
+          Connecting to the game server.
+          <div class="text-sm text-blue-500">
+            If it takes too long, please check your internet connection.
+          </div>
+        } @else if (state === ConnectionState.Error) {
+          An error occurred while connecting to the game server.
+          <div class="text-sm text-blue-500">
+            Please check your internet connection and try again.
+          </div>
+        } @else if (state === ConnectionState.InWaitingRoom) {
+          Waiting for other players to join.
+          <div class="text-sm text-blue-500">
+            The game will start when 2 players are connected.
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+</div>

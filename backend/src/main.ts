@@ -1,6 +1,20 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+// Register tsconfig paths
+import * as tsconfig from 'tsconfig-paths';
+import * as path from 'path';
+
+// Load tsconfig.json
+const baseUrl = path.resolve('./');
+const { paths } = require('../tsconfig.json').compilerOptions;
+
+// Register aliases
+tsconfig.register({
+  baseUrl,
+  paths
+});
+
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
@@ -9,14 +23,17 @@ import * as bodyParser from 'body-parser';
 
 const maxPostSize = process.env.MAX_REQUEST_SIZE || '10mb';
 
-async function bootstrap() {
+export async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  app.enableCors({ origin: '*'});
-  app.use(bodyParser.json({ limit: maxPostSize }));
+  app.enableCors({ origin: '*'});  app.use(bodyParser.json({ limit: maxPostSize }));
   app.use(bodyParser.urlencoded({ limit: maxPostSize, extended: true }));
   app.useGlobalPipes(new ValidationPipe({ stopAtFirstError: true }));
 
   await app.listen(3000);
 }
-bootstrap();
+
+// Execute bootstrap if this file is run directly
+if (require.main === module) {
+  bootstrap();
+}

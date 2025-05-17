@@ -1,27 +1,31 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SharedModule } from 'primeng/api';
+import { ConnectionState } from 'src/app/interfaces/connection-state';
+import { PoolService } from 'src/app/services/pool.service';
+import { ChatComponent } from './chat/chat.component';
+import { GameComponent } from './game/game.component';
+
 @Component({
   selector: 'app-play',
-  imports: [
-    CommonModule
-  ],
+  imports: [SharedModule, ChatComponent, GameComponent],
+  providers: [PoolService],
   templateUrl: './play.component.html',
   styleUrl: './play.component.scss'
 })
 export class PlayComponent {
   
-  private readonly socket: Socket = inject(Socket);
+  private readonly poolService: PoolService = inject(PoolService);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
+
+  public state: ConnectionState = ConnectionState.Disconnected;
 
   constructor() {
-    this.socket.on('connect', () => {
-      this.socket.emit(
-        'joinWaitingRoom'
-      );
+    this.poolService.state$().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe((state) => {
+      this.state = state;
     });
   }
 
-  ngOnDestroy() {
-    this.socket.disconnect();
-  }
 }

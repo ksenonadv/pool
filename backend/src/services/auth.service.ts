@@ -113,8 +113,7 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
-          sub: userId,
-          username,
+          userId
         },
         {
           secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
@@ -123,8 +122,7 @@ export class AuthService {
       ),
       this.jwtService.signAsync(
         {
-          sub: userId,
-          username,
+          userId
         },
         {
           secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
