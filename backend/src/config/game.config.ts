@@ -3,13 +3,13 @@ export const WAITING_ROOM_ID = 'waiting-room';
 
 export const FRAME_RATE = 60;
 export const WALL_THICKNESS = 50;
-export const TABLE_PADDING = 20;
+export const TABLE_PADDING = 40;
 
 export const TABLE_WIDTH = 800;
 export const TABLE_HEIGHT = 400;
 
 export const BALL_RADIUS = 20;
-export const BALL_SPACING = BALL_RADIUS * 1.75;
+export const BALL_SPACING = BALL_RADIUS * 1.5;
 export const RACK_ORIGIN_X = TABLE_WIDTH * 0.35;
 export const RACK_ORIGIN_Y = TABLE_HEIGHT * 0.5;
 

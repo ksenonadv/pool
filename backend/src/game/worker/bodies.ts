@@ -54,12 +54,12 @@ function createPoolTableWalls() {
 
 function createPoolTablePockets() {
   return [
-    Bodies.circle(TABLE_PADDING, TABLE_PADDING, BALL_RADIUS * 1.15, { isStatic: true, label: 'pocket' }),
-    Bodies.circle(TABLE_WIDTH - TABLE_PADDING, TABLE_PADDING, BALL_RADIUS * 1.15, { isStatic: true, label: 'pocket' }),
-    Bodies.circle(TABLE_PADDING, TABLE_HEIGHT - TABLE_PADDING, BALL_RADIUS * 1.15, { isStatic: true, label: 'pocket' }),
-    Bodies.circle(TABLE_WIDTH - TABLE_PADDING, TABLE_HEIGHT - TABLE_PADDING, BALL_RADIUS * 1.15, { isStatic: true, label: 'pocket' }),
-    Bodies.circle(TABLE_WIDTH / 2, TABLE_PADDING, BALL_RADIUS * 1.15, { isStatic: true, label: 'pocket' }),
-    Bodies.circle(TABLE_WIDTH / 2, TABLE_HEIGHT - TABLE_PADDING, BALL_RADIUS * 1.15, { isStatic: true, label: 'pocket' })
+    Bodies.circle(TABLE_PADDING, TABLE_PADDING, BALL_RADIUS * 0.75, { isStatic: true, label: 'pocket' }),
+    Bodies.circle(TABLE_WIDTH - TABLE_PADDING, TABLE_PADDING, BALL_RADIUS * 0.75, { isStatic: true, label: 'pocket' }),
+    Bodies.circle(TABLE_PADDING, TABLE_HEIGHT - TABLE_PADDING, BALL_RADIUS * 0.75, { isStatic: true, label: 'pocket' }),
+    Bodies.circle(TABLE_WIDTH - TABLE_PADDING, TABLE_HEIGHT - TABLE_PADDING, BALL_RADIUS * 0.75, { isStatic: true, label: 'pocket' }),
+    Bodies.circle(TABLE_WIDTH / 2, TABLE_PADDING, BALL_RADIUS * 0.75, { isStatic: true, label: 'pocket' }),
+    Bodies.circle(TABLE_WIDTH / 2, TABLE_HEIGHT - TABLE_PADDING, BALL_RADIUS * 0.75, { isStatic: true, label: 'pocket' })
   ];
 }
 
@@ -82,7 +82,7 @@ export function createPoolTableBalls() {
       balls.add(
         Bodies.circle(
           x, y,
-          BALL_RADIUS,
+          BALL_RADIUS / 2,
           {
             label: `ball_${ballNumber}`,
             ballNumber,
