@@ -21,20 +21,17 @@ export const provideSocket = [
             const socket = new Socket(config);
 
             const authService = inject(AuthService);
+            let oldLoginState: boolean = false;
 
             authService.isLoggedIn().subscribe((isLoggedIn: boolean) => {
                 
+                if (oldLoginState == isLoggedIn)
+                    return;
+
                 if (!isLoggedIn)
                     return;
 
-                console.log('Updating socket auth token');
-
-                socket.ioSocket.auth = { token: authService.getAccessToken() };
-
-                if (socket.ioSocket.connected)
-                    socket.disconnect();
-                
-                socket.connect();
+                socket.ioSocket.auth = { token: authService.getAccessToken() };                
             });
 
             return socket;

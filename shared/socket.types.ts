@@ -40,7 +40,7 @@ export enum ServerEvent {
 
 export type ServerGameEventData = {
   event: ServerEvent;
-  data: SetPlayersEventData | Array<Ball> | boolean | SyncCueEventData | string | SetBallGroupEventData | undefined | BallPocketedEventData;
+  data: SetPlayersEventData | Array<Ball> | boolean | SyncCueEventData | string | SetBallGroupEventData | undefined | BallPocketedEventData | GameOverEventData;
 };
 
 export const enum ConnectionStateEventData {
@@ -83,4 +83,9 @@ export type SetBallGroupEventData = Record<string, BallGroup>;
 export type BallPocketedEventData = {
   ball: number;
   group: BallGroup;
+};
+
+export type GameOverEventData = {
+  message: string;
+  duration?: number;
 };

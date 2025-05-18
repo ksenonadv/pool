@@ -20,7 +20,6 @@ export class Game {
 
   private worker: Worker;
   private activePlayer: GamePlayer;
-  private ballsMoving: boolean = false;
 
   private currentPlayerPocketedBalls: boolean = false;
   private shouldSwitchTurn: boolean = false;
@@ -32,6 +31,8 @@ export class Game {
   private stripesRemaining: Set<number> = new Set([9,10,11,12,13,14,15]);
 
   private endGameCallback: () => void = undefined;
+
+  private matchStartTime: number = Date.now();
 
   private get otherPlayer() {
     return this.players.find(
@@ -88,7 +89,6 @@ export class Game {
         break;
       }
       case 'MOVEMENT_START': {
-        this.ballsMoving = true;
         this.broadcast(
           SocketEvent.SERVER_GAME_EVENT,
           {
@@ -99,9 +99,7 @@ export class Game {
         break;
       }
       case 'MOVEMENT_END': {
-        
-        this.ballsMoving = false;
-        
+                
         this.broadcast(
           SocketEvent.SERVER_GAME_EVENT,
           {
@@ -154,10 +152,21 @@ export class Game {
           this.gameOver = true;
           this.sendMessage(gameOverMsg);
 
-          this.broadcast(SocketEvent.SERVER_GAME_EVENT, {
-            event: ServerEvent.GAME_OVER,
-            data: winnerId
+          this.players.forEach(player => {
+
+            player.socket.emit(
+              SocketEvent.SERVER_GAME_EVENT,
+              {
+                event: ServerEvent.GAME_OVER,
+                data: {
+                  message: gameOverMsg,
+                  duration: Math.floor((Date.now() - this.matchStartTime) / 1_000), // Match duration in seconds
+                }
+              }
+            );
+
           });
+
 
           if (this.endGameCallback) {
             this.endGameCallback();
@@ -284,12 +293,6 @@ export class Game {
     switch (event) {
       case ClientGameEvent.SHOOT: {
         
-        // Balls are moving, so we can't shoot.
-        // We're probably waiting for a shoot to finish.
-        
-        if (this.ballsMoving)
-          return;
-
         const { power, mouseX, mouseY } = payload as ShootEventData;
         
         this.worker.postMessage({

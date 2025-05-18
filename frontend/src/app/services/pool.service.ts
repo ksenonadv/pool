@@ -18,26 +18,16 @@ export class PoolService implements OnDestroy {
   private messages: Subject<ChatMessage> = new Subject<ChatMessage>();
 
   constructor() {
-
-    this.socket.once('connect', () => {
-      
-      this.state.next(
-        ConnectionState.Connected
-      );
-      
-      this.socket.emit(
-        SocketEvent.JOIN
-      );
-
+    
+    this.socket.on('connect', () => {
+      this.state.next(ConnectionState.Connected);
+      this.socket.emit(SocketEvent.JOIN);
     });
 
     this.socket.on('disconnect', () => {
       this.state.next(
         ConnectionState.Disconnected
       );
-
-      // Attempt to reconnect.
-      this.socket.connect();
     });
 
     this.socket.on('error', () => {
@@ -53,9 +43,7 @@ export class PoolService implements OnDestroy {
     });
 
     this.socket.fromEvent(SocketEvent.CHAT_MESSAGE).subscribe((message: ChatMessage) => {
-      this.messages.next(
-        message
-      );
+      this.messages.next(message);
     });
 
     if (!this.socket.connected)
@@ -63,11 +51,8 @@ export class PoolService implements OnDestroy {
   }
 
   ngOnDestroy() {
-
-    if (!this.socket.connected)
-      return;
-
-    this.socket.disconnect();
+    if (this.socket.connected)
+      this.socket.disconnect();
   }
 
   public state$() {

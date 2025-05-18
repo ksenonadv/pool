@@ -35,6 +35,11 @@
           <div class="text-sm text-blue-500">
             The game will start when 2 players are connected.
           </div>
+        } @else if (state == ConnectionState.Connected) {
+          You are already playing in another browser tab.
+          <div class="text-sm text-blue-500">
+            You can only play in one tab at a time.
+          </div>
         }
       </div>
     </div>

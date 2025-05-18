@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { WsException } from "@nestjs/websockets";
-import { ChatMessage, ClientGameEventData, ConnectionStateEventData, SocketEvent } from "@shared/socket.types";
+import { ChatMessage, ClientGameEventData, ConnectionStateEventData, ServerEvent, SocketEvent } from "@shared/socket.types";
 import { Server, Socket } from "socket.io";
 import { UsersService } from "./users.service";
 import { POOL_GAME_MIN_PLAYERS, WAITING_ROOM_ID } from "src/config/constants/pool.constants";
@@ -25,7 +25,7 @@ export class SocketService {
   }
 
   public async onJoin(client: Socket) {
-    
+
     const userId = client['user']['userId'];
 
     if (!userId) {
@@ -34,11 +34,8 @@ export class SocketService {
       );
     }
 
-    if (this.userIdToSocket.has(userId)) {
-      throw new WsException(
-        'User is already connected'
-      );
-    }
+    if (this.userIdToSocket.has(userId))
+      return;
 
     this.userIdToSocket.set(userId, client);
     this.socketToUserId.set(client.id, userId);
@@ -110,6 +107,7 @@ export class SocketService {
     const gameId = game.id;
 
     if (this.games.has(game)) {
+      
       this.games.delete(
         game
       );
@@ -117,9 +115,8 @@ export class SocketService {
       game.cleanup();
     }
 
-
     this.server.in(
-      WAITING_ROOM_ID
+      gameId
     ).fetchSockets().then((sockets) => {
 
       sockets.forEach((socket) => {
@@ -132,9 +129,16 @@ export class SocketService {
           gameId
         );
 
-        this.addToWaitingRoom(
-          socket as unknown as Socket
+        socket.emit(
+          SocketEvent.SERVER_GAME_EVENT,
+          {
+            event: ServerEvent.GAME_OVER,
+            data: {
+              message: 'Your oponnect has left the game.'
+            }
+          }
         );
+
       });
 
     });

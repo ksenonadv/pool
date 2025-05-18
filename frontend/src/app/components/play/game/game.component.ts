@@ -1,13 +1,14 @@
-import { ChangeDetectorRef, Component, DestroyRef, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, ElementRef, inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ConnectionState } from 'src/app/interfaces/connection-state';
 import { GAME_IMAGES_ASSETS } from './assets';
 import { BallGroup, MIN_POWER } from '@shared/game.types';
 import { PoolService } from 'src/app/services/pool.service';
-import { Ball, BallPocketedEventData, ClientGameEvent, ServerEvent, ServerGameEventData, SetBallGroupEventData, SetPlayersEventData, SocketEvent, SyncCueEventData } from '@shared/socket.types';
+import { Ball, BallPocketedEventData, ClientGameEvent, GameOverEventData, ServerEvent, ServerGameEventData, SetBallGroupEventData, SetPlayersEventData, SocketEvent, SyncCueEventData } from '@shared/socket.types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SharedModule } from 'src/app/modules/shared.module';
 import { UserService } from 'src/app/services/user.service';
 import { PlayersComponent } from './players/players.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -15,12 +16,13 @@ import { PlayersComponent } from './players/players.component';
   styleUrl: './game.component.scss',
   imports: [SharedModule, PlayersComponent]
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnChanges {
 
   private readonly userService: UserService = inject(UserService);
   private readonly service: PoolService = inject(PoolService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly router: Router = inject(Router);
 
   @Input()
   public state: ConnectionState = ConnectionState.Disconnected;
@@ -54,6 +56,8 @@ export class GameComponent implements OnInit {
 
   public stripesPocketed: Array<number> = [];
   public solidsPocketed: Array<number> = [];
+
+  private checkAnotherTabTime: number = 0;
 
   ngOnInit(): void {
     
@@ -139,16 +143,15 @@ export class GameComponent implements OnInit {
             );
           }
 
-          break
+          break;
         }
         case ServerEvent.GAME_OVER: {
-          this.balls = [];
-          this.players = [];
-          this.stripesPocketed = [];
-          this.solidsPocketed = [];
-          this.canShoot = false;
-          this.canvas.nativeElement.width = 800;
-          this.canvas.nativeElement.height = 400;
+
+          const { message } = payload as GameOverEventData;
+
+          this.router.navigate(['/']);
+
+          alert(message);
           break;
         }
       }
@@ -292,4 +295,21 @@ export class GameComponent implements OnInit {
 
     this.ctx!.restore();
   }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+
+    if (changes['state'] && changes['state'].currentValue == ConnectionState.Connected) {
+      this.checkAnotherTabTime = Date.now();
+    }
+  }
+
+  public showConnectedInAnotherTab(): boolean {
+    
+    if (this.state != ConnectionState.Connected)
+      return false;
+
+    const diff = Date.now() - this.checkAnotherTabTime;
+    return diff > 2500;
+  }
+
 }

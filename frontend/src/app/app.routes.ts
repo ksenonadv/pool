@@ -27,8 +27,12 @@ export const routes: Routes = [
     loadComponent: () => import('./components/auth/callback/auth-callback.component').then(m => m.AuthCallbackComponent)
   },
   {
+    path: 'home',
+    loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent),
+  },
+  {
     path: '**',
-    redirectTo: '/play',
+    redirectTo: '/home',
     pathMatch: 'full',
   }
 ];
