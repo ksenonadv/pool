@@ -11,6 +11,7 @@ import { PlayersComponent } from './players/players.component';
 import { Router } from '@angular/router';
 import { DialogService } from 'primeng/dynamicdialog';
 import { GameOverDialogComponent } from './game-over-dialog/game-over-dialog.component';
+import { BALL_SIZE, CUE_SIZE, TABLE_PADDING } from '../table.constants';
 
 @Component({
   selector: 'app-game',
@@ -203,8 +204,6 @@ export class GameComponent implements OnInit, OnChanges {
         `ball_${no}`
       ];
 
-      const ballSize = 30;
-
       this.ctx!.save();
 
       this.ctx!.translate(position.x, position.y);
@@ -212,10 +211,10 @@ export class GameComponent implements OnInit, OnChanges {
       
       this.ctx!.drawImage(
         img,
-        -ballSize / 2,
-        -ballSize / 2,
-        ballSize,
-        ballSize
+        -BALL_SIZE / 2,
+        -BALL_SIZE / 2,
+        BALL_SIZE,
+        BALL_SIZE
       );
 
       this.ctx!.restore();
@@ -285,20 +284,19 @@ export class GameComponent implements OnInit, OnChanges {
     const img = this.assets!['cue'];
     const { position } = cue_ball;
 
-    const cueSize = 150; 
-    const padding = 25 + (this.cueData.power / 100 * 25);
-    const cueAngle = Math.atan2(this.cueData!.mouseY - position.y, this.cueData!.mouseX - position.x);
+    const padding = TABLE_PADDING + (this.cueData.power / 100 * TABLE_PADDING);
+    const angle = Math.atan2(this.cueData!.mouseY - position.y, this.cueData!.mouseX - position.x);
 
     this.ctx!.save();
     this.ctx!.translate(position.x, position.y); // Move origin to cue ball center
-    this.ctx!.rotate(cueAngle); // Rotate around cue ball
+    this.ctx!.rotate(angle); // Rotate around cue ball
 
     this.ctx!.drawImage(
       img,
       padding,                  
-      -cueSize / 2,          
-      cueSize,           
-      cueSize                
+      -CUE_SIZE / 2,          
+      CUE_SIZE,           
+      CUE_SIZE                
     );
 
     this.ctx!.restore();
