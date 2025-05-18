@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { PoolGateway } from 'src/app.gateway';
+import { GameGateway } from 'src/app.gateway';
 import { UsersModule } from './users.module';
-import { SocketService } from 'src/services/socket.service';
+import { GameService } from 'src/services/game.service';
 
 @Module({
     imports: [
@@ -10,8 +10,8 @@ import { SocketService } from 'src/services/socket.service';
         UsersModule
     ],
     providers: [
-        PoolGateway, 
-        SocketService
+        GameGateway, 
+        GameService
     ]
 })
-export class PoolModule { }
+export class GameModule { }

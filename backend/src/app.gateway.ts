@@ -2,7 +2,7 @@ import { WebSocketGateway, SubscribeMessage, OnGatewayDisconnect, ConnectedSocke
 import { Server, Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { WsJwtGuard } from 'src/guards/wsAuth.guard';
-import { SocketService } from 'src/services/socket.service';
+import { GameService } from 'src/services/game.service';
 import { ClientGameEventData, SocketEvent } from '@shared/socket.types';
 
 @WebSocketGateway({
@@ -11,10 +11,10 @@ import { ClientGameEventData, SocketEvent } from '@shared/socket.types';
     origin: '*',
   }
 })
-export class PoolGateway implements OnGatewayInit, OnGatewayDisconnect {
+export class GameGateway implements OnGatewayInit, OnGatewayDisconnect {
   
   constructor(
-    private readonly socketService: SocketService,
+    private readonly socketService: GameService,
   ) { }
 
   afterInit(server: Server) {

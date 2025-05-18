@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
-import { UsersModule } from './modules/users.module';
-import { AuthModule } from './modules/auth.module';
+
 import { ConfigModule } from '@nestjs/config';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PoolModule } from './modules/pool.module';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
+
+import { AuthModule } from './modules/auth.module';
+import { UsersModule } from './modules/users.module';
+import { GameModule } from './modules/game.module';
 
 @Module({
   imports: [
@@ -18,7 +21,7 @@ import { TypeOrmConfigService } from './config/typeorm-config.service';
     }),
     UsersModule,
     AuthModule,
-    PoolModule
+    GameModule
   ],
   controllers: [],
   providers: [AppService],

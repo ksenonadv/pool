@@ -7,7 +7,7 @@ import { POOL_GAME_MIN_PLAYERS, WAITING_ROOM_ID } from "../config/game.config";
 import { Game } from "src/game/game";
 
 @Injectable()
-export class SocketService {
+export class GameService {
 
   private server: Server;
 
