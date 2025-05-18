@@ -136,7 +136,7 @@ function handleShoot(payload: ShootEventData) {
   if (!cueBall) 
     return;
 
-  const force = 0.2 * (power / 100);
+  const force = 0.15 * (power / 100);
   const delta = Vector.sub(cueBall.position, { x: mouseX, y: mouseY });
   const norm = Vector.normalise(delta);
   const forceVector = Vector.mult(norm, force);

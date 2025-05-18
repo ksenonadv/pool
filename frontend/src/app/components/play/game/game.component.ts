@@ -262,7 +262,7 @@ export class GameComponent implements OnInit, OnChanges {
     const power = Math.sqrt(
       Math.pow(this.mouseX - position.x, 2) +
       Math.pow(this.mouseY - position.y, 2)
-    );
+    ) / 2;
 
     this.cueData = {
       power: Math.min(Math.max(power, MIN_POWER), 100),
@@ -284,7 +284,7 @@ export class GameComponent implements OnInit, OnChanges {
     const img = this.assets!['cue'];
     const { position } = cue_ball;
 
-    const padding = TABLE_PADDING + (this.cueData.power / 100 * TABLE_PADDING);
+    const padding = TABLE_PADDING + (this.cueData.power / 100 * 35);
     const angle = Math.atan2(this.cueData!.mouseY - position.y, this.cueData!.mouseX - position.x);
 
     this.ctx!.save();
