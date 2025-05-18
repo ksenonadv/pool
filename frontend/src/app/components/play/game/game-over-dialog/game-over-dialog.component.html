@@ -1,29 +1,51 @@
-<div class="min-w-[400px] max-w-full px-8 py-10 rounded-xl flex flex-col items-center justify-center text-center bg-gradient-to-br from-blue-900 to-blue-950 shadow-2xl border border-blue-800">
+<div class="relative min-w-[400px] max-w-full px-8 py-10 rounded-xl flex flex-col items-center justify-center text-center bg-gradient-to-br from-blue-900 to-blue-950 shadow-2xl border border-blue-800">
 
-  <fa-icon
-    [icon]="['fas', 'trophy']"
-    class="text-7xl text-yellow-400 drop-shadow-lg mb-5 animate-bounce"
-  ></fa-icon>
+  <button
+    class="absolute top-5 right-5 text-blue-200 hover:text-red-400 transition-colors text-2xl focus:outline-none"
+    (click)="close()"
+    aria-label="Close dialog"
+    type="button"
+  >
+    <fa-icon [icon]="['fas', 'times']"></fa-icon> 
+  </button>
 
-  <h1 class="text-4xl font-extrabold mb-3 text-white tracking-wide drop-shadow">
-    Match Over
-  </h1>
+  <img src="/assets/images/logo.png" alt="Logo" class="w-32 mx-auto mb-4">
 
-  <p class="text-lg text-blue-100 bg-blue-900/80 rounded-lg px-6 py-4 shadow-lg border border-blue-700 w-full font-medium">
-    <span [innerHTML]="message"></span>
-  </p>
-
-  <p class="text-lg text-blue-100 mt-2 bg-blue-900/80 rounded-lg px-6 py-4 shadow-lg border border-blue-700 w-full font-medium">
-    This match took <span class = "text-blue-500">{{ duration | seconds:true }}</span>.
-  </p>
-
-  <div class="w-full flex justify-center mt-2">
-    <button
-      class="bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 shadow-xl py-2.5 px-6 rounded-lg flex items-center transition-all duration-200 border border-blue-800 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-      (click)="close()"
-    >
-      <fa-icon [icon]="['fas', 'times']" class="mr-3 text-white text-lg"></fa-icon>
-      <span class="text-white font-semibold text-lg">Close</span>
-    </button>
-  </div>
+  @switch (reason) {
+    @case('timeout') {
+      <div class="flex items-center gap-4 bg-blue-900/80 rounded-lg px-6 py-4 shadow-lg border border-blue-700 w-full mt-2">
+        <img [src]="player.avatar" alt="{{ player.name }}'s avatar" class="w-14 h-14 rounded-full border-2 border-yellow-400 shadow-md object-cover" />
+        <div class="text-left flex-1">
+          <p class="text-lg text-blue-100 font-semibold">
+            <span class="text-yellow-400">{{ player.name }}</span> has timed out and the match cannot continue.<br />
+            <span class="text-blue-300 text-sm">We are sorry for the inconvenience.</span>
+          </p>
+        </div>
+      </div>
+    }
+    @case('win') {
+      <div class="flex items-center gap-4 bg-blue-900/80 rounded-lg px-6 py-4 shadow-lg border border-blue-700 w-full mt-2">
+        <img [src]="player.avatar" alt="{{ player.name }}'s avatar" class="w-14 h-14 rounded-full border-2 border-yellow-400 shadow-md object-cover" />
+        <div class="text-left flex-1">
+          <p class="text-lg text-blue-100 font-semibold">
+            <span class="text-yellow-400">{{ player.name }}</span> has won the match!<br />
+            <span class="text-green-400 text-sm">Congratulations for the win!</span> <br>
+            <span class = "text-blue-500 text-sm">Match duration: {{ duration | seconds:true }}</span>
+          </p>
+        </div>
+      </div>
+    }
+    @case('fault') {
+      <div class="flex items-center gap-4 bg-blue-900/80 rounded-lg px-6 py-4 shadow-lg border border-blue-700 w-full mt-2">
+        <img [src]="player.avatar" alt="{{ player.name }}'s avatar" class="w-14 h-14 rounded-full border-2 border-yellow-400 shadow-md object-cover" />
+        <div class="text-left flex-1">
+          <p class="text-lg text-blue-100 font-semibold">
+            <span class="text-yellow-400">{{ player.name }}</span> has faulted and lost the game.<br />
+            <span class="text-blue-300 text-sm">Pocketed the 8th ball too early.</span> <br>
+            <span class = "text-blue-500 text-sm">Match duration: {{ duration | seconds:true }}</span>
+          </p>
+        </div>
+      </div>
+    }
+  }
 </div>

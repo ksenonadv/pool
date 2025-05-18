@@ -85,7 +85,19 @@ export type BallPocketedEventData = {
   group: BallGroup;
 };
 
+export const enum GameOverReason {
+  DISCONNECT = 'timeout',
+  FAULT = 'fault',
+  WIN = 'win'
+};
+
+export type NameAndAvatar = {
+  name: string;
+  avatar: string;
+};
+
 export type GameOverEventData = {
-  message: string;
+  reason: GameOverReason;
+  player: NameAndAvatar;
   duration?: number;
 };

@@ -69,6 +69,7 @@ export class GameStateManagerService {
     event: ClientGameEventData['event'],
     payload: ClientGameEventData['data']
   ): void {
+    
     // Check if the sender is the active player
     if (this.gameStateService.activePlayer.socket.id !== sender.id)
       return;
@@ -79,6 +80,7 @@ export class GameStateManagerService {
 
     switch (event) {
       case ClientGameEvent.SHOOT: {
+        this.gameStateService.currentPlayerPocketedBalls = false;
         this.physicsService.shoot(payload);
         break;  
       }

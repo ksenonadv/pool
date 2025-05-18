@@ -3,6 +3,7 @@ import { BallGroup } from '@shared/game.types';
 import { GameStateService } from './game-state.service';
 import { CommunicationService } from './communication.service';
 import { IGamePlayer } from '../interfaces/game-player.interface';
+import { GameOverReason, NameAndAvatar } from '@shared/socket.types';
 
 /**
  * Injectable service that manages game rules
@@ -51,35 +52,34 @@ export class RulesService {
    * Handles the 8-ball being pocketed
    */
   private handleEightBallPocketed(): void {
-    const { activePlayer, otherPlayer } = this.gameStateService;
     
-    // 8-ball pocketed
-    let winnerId: string | null = null;
-    let gameOverMsg = '';
+    const { activePlayer } = this.gameStateService;
     
     if (this.gameStateService.breakShot) {
-      gameOverMsg = `${activePlayer.name} pocketed the 8-ball on the break and lost!`;
-      winnerId = otherPlayer.userId;
-    } 
-    else if (
-      activePlayer.ballGroup &&
-      ((activePlayer.ballGroup === BallGroup.SOLIDS && this.gameStateService.solidsRemaining.size === 0) ||
-       (activePlayer.ballGroup === BallGroup.STRIPES && this.gameStateService.stripesRemaining.size === 0))
-    ) {
-      gameOverMsg = `${activePlayer.name} pocketed the 8-ball and won!`;
-      winnerId = activePlayer.userId;
-    } else {
-      gameOverMsg = `${activePlayer.name} pocketed the 8-ball too early and lost!`;
-      winnerId = otherPlayer.userId;
+      return this.endGame(
+        GameOverReason.FAULT
+      );
     }
 
-    this.endGame(gameOverMsg, winnerId);
+    const hasBallsLeft = activePlayer.ballGroup === BallGroup.SOLIDS && this.gameStateService.solidsRemaining.size > 0 ||
+        activePlayer.ballGroup === BallGroup.STRIPES && this.gameStateService.stripesRemaining.size > 0;
+
+    if (!hasBallsLeft) {
+      this.endGame(
+        GameOverReason.FAULT
+      );
+    } else {
+      this.endGame(
+        GameOverReason.WIN, 
+      );
+    }
   }
 
   /**
    * Assigns ball groups to players if not already assigned
    */
   private checkAndAssignGroups(group: BallGroup): void {
+    
     const { activePlayer, otherPlayer } = this.gameStateService;
     
     if (this.gameStateService.breakShot || activePlayer.ballGroup !== undefined)
@@ -117,19 +117,27 @@ export class RulesService {
   /**
    * Ends the game
    */
-  public endGame(message: string, winnerId?: string): void {
+  public endGame(reason: GameOverReason, player?: IGamePlayer): void {
     
     if (this.gameStateService.gameOver) 
       return;
 
     this.gameStateService.gameOver = true;
-    this.communicationService.notifyGameOver(message, winnerId);
+
+    if (!player)
+      player = this.gameStateService.activePlayer;
+
+    this.communicationService.notifyGameOver(
+      reason, 
+      player
+    );
   }
 
   /**
    * Handles player disconnection
    */
   public handleDisconnect(socketId: string): void {
+    
     const player = this.gameStateService.players.find(
       player => player.socket.id === socketId
     );
@@ -138,7 +146,8 @@ export class RulesService {
       return;
 
     this.endGame(
-      `${player.name} disconnected.`
+      GameOverReason.DISCONNECT, 
+      player
     );
   }
 }

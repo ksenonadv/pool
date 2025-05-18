@@ -3,6 +3,8 @@ import { Socket } from 'socket.io';
 import { 
   ChatMessage, 
   ConnectionStateEventData, 
+  GameOverReason, 
+  NameAndAvatar, 
   ServerEvent, 
   SetBallGroupEventData, 
   SocketEvent 
@@ -204,7 +206,7 @@ export class CommunicationService {
   /**
    * Notifies about game over
    */
-  public notifyGameOver(message: string, winnerId?: string): void {
+  public notifyGameOver(reason: GameOverReason, gamePlayer: NameAndAvatar): void {
 
     this.gameStateService.players.forEach(player => {
       player.socket.emit(
@@ -212,7 +214,11 @@ export class CommunicationService {
         {
           event: ServerEvent.GAME_OVER,
           data: {
-            message,
+            reason,
+            player: {
+              name: gamePlayer.name,
+              avatar: gamePlayer.avatar,
+            },
             duration: this.gameStateService.getDuration(), // Match duration in seconds
           }
         }
