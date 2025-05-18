@@ -8,7 +8,9 @@ import { SOLID_BALLS, STRIPED_BALLS } from 'src/config/game.config';
  */
 @Injectable()
 export class GameStateService {
+ 
   // Core game state
+  
   public readonly id: string = crypto.randomUUID();
   public gameOver: boolean = false;
   public breakShot: boolean = true; // First shot is a break
@@ -93,4 +95,9 @@ export class GameStateService {
     else if (group === BallGroup.STRIPES)
       this.stripesRemaining.delete(ballNumber);
   }
+
+  public getDuration(): number {
+    return Math.floor((Date.now() - this.matchStartTime) / 1000);
+  }
+
 }

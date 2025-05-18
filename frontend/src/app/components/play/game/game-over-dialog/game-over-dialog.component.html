@@ -1,0 +1,29 @@
+<div class="min-w-[400px] max-w-full px-8 py-10 rounded-xl flex flex-col items-center justify-center text-center bg-gradient-to-br from-blue-900 to-blue-950 shadow-2xl border border-blue-800">
+
+  <fa-icon
+    [icon]="['fas', 'trophy']"
+    class="text-7xl text-yellow-400 drop-shadow-lg mb-5 animate-bounce"
+  ></fa-icon>
+
+  <h1 class="text-4xl font-extrabold mb-3 text-white tracking-wide drop-shadow">
+    Match Over
+  </h1>
+
+  <p class="text-lg text-blue-100 bg-blue-900/80 rounded-lg px-6 py-4 shadow-lg border border-blue-700 w-full font-medium">
+    <span [innerHTML]="message"></span>
+  </p>
+
+  <p class="text-lg text-blue-100 mt-2 bg-blue-900/80 rounded-lg px-6 py-4 shadow-lg border border-blue-700 w-full font-medium">
+    This match took <span class = "text-blue-500">{{ duration | seconds:true }}</span>.
+  </p>
+
+  <div class="w-full flex justify-center mt-2">
+    <button
+      class="bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 shadow-xl py-2.5 px-6 rounded-lg flex items-center transition-all duration-200 border border-blue-800 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+      (click)="close()"
+    >
+      <fa-icon [icon]="['fas', 'times']" class="mr-3 text-white text-lg"></fa-icon>
+      <span class="text-white font-semibold text-lg">Close</span>
+    </button>
+  </div>
+</div>

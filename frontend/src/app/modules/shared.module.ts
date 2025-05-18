@@ -6,6 +6,8 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons'
 import { RouterModule } from "@angular/router";
+import { PrimeNgModule } from "./primeng.module";
+import { FormatSecondsPipe } from "../pipes/format-seconds.pipe";
 
 const modules = [
     CommonModule,
@@ -13,11 +15,13 @@ const modules = [
     FormsModule,
     RouterModule,
     FontAwesomeModule,
+    PrimeNgModule,
 ];
 
 @NgModule({
-    imports: [modules],
-    exports: modules
+    imports: [...modules, FormatSecondsPipe],
+    exports: [...modules, FormatSecondsPipe],
+    providers: [FormatSecondsPipe]
 })
 export class SharedModule {
 

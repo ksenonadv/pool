@@ -9,6 +9,8 @@ import { SharedModule } from 'src/app/modules/shared.module';
 import { UserService } from 'src/app/services/user.service';
 import { PlayersComponent } from './players/players.component';
 import { Router } from '@angular/router';
+import { DialogService } from 'primeng/dynamicdialog';
+import { GameOverDialogComponent } from './game-over-dialog/game-over-dialog.component';
 
 @Component({
   selector: 'app-game',
@@ -23,6 +25,7 @@ export class GameComponent implements OnInit, OnChanges {
   private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router: Router = inject(Router);
+  private readonly dialogService: DialogService = inject(DialogService);
 
   @Input()
   public state: ConnectionState = ConnectionState.Disconnected;
@@ -144,16 +147,19 @@ export class GameComponent implements OnInit, OnChanges {
           }
 
           break;
-        }
+        }        
+        
         case ServerEvent.GAME_OVER: {
 
-          const { message, duration } = payload as GameOverEventData;
+          this.dialogService.open(
+            GameOverDialogComponent,
+            {              
+              data: payload,
+              modal: true
+            }
+          );
 
           this.router.navigate(['/']);
-
-          
-          
-
           break;
         }
       }

@@ -16,9 +16,10 @@ import { IGamePlayer } from '../interfaces/game-player.interface';
  */
 @Injectable()
 export class CommunicationService {
+  
   constructor(
-    private readonly gameStateService: GameStateService
-  ) {}
+    private readonly gameStateService: GameStateService,
+  ) { }
 
   /**
    * Broadcasts an event to all players
@@ -204,8 +205,7 @@ export class CommunicationService {
    * Notifies about game over
    */
   public notifyGameOver(message: string, winnerId?: string): void {
-    this.sendMessage(message);
-    
+
     this.gameStateService.players.forEach(player => {
       player.socket.emit(
         SocketEvent.SERVER_GAME_EVENT,
@@ -213,7 +213,7 @@ export class CommunicationService {
           event: ServerEvent.GAME_OVER,
           data: {
             message,
-            duration: Math.floor((Date.now() - this.gameStateService.matchStartTime) / 1_000), // Match duration in seconds
+            duration: this.gameStateService.getDuration(), // Match duration in seconds
           }
         }
       );

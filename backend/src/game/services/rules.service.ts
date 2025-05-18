@@ -118,6 +118,7 @@ export class RulesService {
    * Ends the game
    */
   public endGame(message: string, winnerId?: string): void {
+    
     if (this.gameStateService.gameOver) 
       return;
 
@@ -136,6 +137,8 @@ export class RulesService {
     if (!player)
       return;
 
-    this.endGame(`${player.name} disconnected. Game over!`);
+    this.endGame(
+      `${player.name} disconnected.`
+    );
   }
 }
