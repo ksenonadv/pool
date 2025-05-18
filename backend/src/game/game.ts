@@ -1,10 +1,13 @@
 import { ChatMessage, ClientGameEvent, ClientGameEventData, ConnectionStateEventData, ServerEvent, SetBallGroupEventData, ShootEventData, SocketEvent } from "@shared/socket.types";
+
 import { Socket } from "socket.io";
 import { Worker } from "worker_threads";
 import { join } from "path";
-import { getBallGroup } from './helpers';
+
 import { BallGroup } from "@shared/game.types";
-import { MainToWorkerMessage, WorkerToMainMessage } from "@shared/worker.types";
+
+import { MainProcessMessageType, WorkerProcessMessage, WorkerProcessMessageType } from "src/game/ipc.types";
+import { SOLID_BALLS, STRIPED_BALLS } from "src/config/game.config";
 
 export type GamePlayer = { 
   name: string;
@@ -27,8 +30,8 @@ export class Game {
   private breakShot: boolean = true; // First shot is a break
   private gameOver: boolean = false; // Track if game is over
 
-  private solidsRemaining: Set<number> = new Set([1,2,3,4,5,6,7]);
-  private stripesRemaining: Set<number> = new Set([9,10,11,12,13,14,15]);
+  private solidsRemaining: Set<number> = new Set(SOLID_BALLS);
+  private stripesRemaining: Set<number> = new Set(STRIPED_BALLS);
 
   private endGameCallback: () => void = undefined;
 
@@ -43,10 +46,12 @@ export class Game {
     private readonly players: [GamePlayer, GamePlayer]
   ) 
   { 
-    this.worker = new Worker(join(__dirname, 'worker', 'physics-worker.js'));    
+    this.worker = new Worker(join(__dirname, 'worker', 'index.js'));    
     this.worker.on('message', this.handleWorkerMessage.bind(this));
     
-    this.worker.postMessage({ type: 'INIT' } as MainToWorkerMessage);
+    this.worker.postMessage({
+      type: MainProcessMessageType.INIT
+    });
 
     // Initialize ball groups for players
     this.players[0].ballGroup = undefined;
@@ -76,9 +81,10 @@ export class Game {
     );
   }
 
-  private handleWorkerMessage(message: WorkerToMainMessage) {
+  private handleWorkerMessage(message: WorkerProcessMessage) {
+    
     switch (message.type) {
-      case 'UPDATE_BALLS': {
+      case WorkerProcessMessageType.UPDATE_BALLS: {
         this.broadcast(
           SocketEvent.SERVER_GAME_EVENT,
           {
@@ -88,7 +94,7 @@ export class Game {
         );
         break;
       }
-      case 'MOVEMENT_START': {
+      case WorkerProcessMessageType.MOVEMENT_START: {
         this.broadcast(
           SocketEvent.SERVER_GAME_EVENT,
           {
@@ -98,7 +104,7 @@ export class Game {
         );
         break;
       }
-      case 'MOVEMENT_END': {
+      case WorkerProcessMessageType.MOVEMENT_END: {
                 
         this.broadcast(
           SocketEvent.SERVER_GAME_EVENT,
@@ -122,7 +128,7 @@ export class Game {
 
         break;
       }
-      case 'BALL_POCKETED': {
+      case WorkerProcessMessageType.BALL_POCKETED: {
         
         const { ballNumber } = message.payload;
         
@@ -179,7 +185,7 @@ export class Game {
         if (this.breakShot)
           this.breakShot = false;
         
-        const group = getBallGroup(
+        const group = this.getBallGroup(
           ballNumber
         );
         
@@ -227,7 +233,7 @@ export class Game {
         this.currentPlayerPocketedBalls = true;
         break;
       }
-      case 'CUE_BALL_POCKETED': {
+      case WorkerProcessMessageType.CUE_BALL_POCKETED: {
         this.shouldSwitchTurn = true;
         break;
       }
@@ -242,11 +248,6 @@ export class Game {
     this.currentPlayerPocketedBalls = false;
     this.shouldSwitchTurn = false;
     
-    this.worker.postMessage({
-      type: 'SET_ACTIVE_PLAYER',
-      payload: { userId: player.userId }
-    } as MainToWorkerMessage);
-
     this.activePlayer.socket.emit(
       SocketEvent.SERVER_GAME_EVENT,
       {
@@ -292,13 +293,11 @@ export class Game {
 
     switch (event) {
       case ClientGameEvent.SHOOT: {
-        
-        const { power, mouseX, mouseY } = payload as ShootEventData;
-        
+                
         this.worker.postMessage({
-          type: 'SHOOT',
-          payload: { power, mouseX, mouseY }
-        } as MainToWorkerMessage);
+          type: MainProcessMessageType.SHOOT,
+          payload
+        });
         
         break;  
       }
@@ -354,12 +353,28 @@ export class Game {
     }
   }
 
+  private getBallGroup(
+    number: number
+  ): BallGroup {
+      if (number === 8)
+        return BallGroup.EIGHT;
+      else if (SOLID_BALLS.includes(number))
+        return BallGroup.SOLIDS;
+      else if (STRIPED_BALLS.includes(number))
+        return BallGroup.STRIPES;
+
+    return BallGroup.NONE;
+  }
+
   public cleanup() {
 
     if (!this.worker)
       return;
 
-    this.worker.postMessage({ type: 'STOP' } as MainToWorkerMessage);
+    this.worker.postMessage({ 
+      type: MainProcessMessageType.STOP
+    });
+
     this.worker.terminate();
     this.worker = null;
   }

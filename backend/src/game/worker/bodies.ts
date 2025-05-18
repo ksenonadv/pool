@@ -1,6 +1,5 @@
 import { Bodies } from "matter-js";
-import { BALL_NUMBERS, BALL_RADIUS, BALL_SPACING, CUE_BALL_POSITION_X, CUE_BALL_POSITION_Y, RACK_ORIGIN_X, RACK_ORIGIN_Y, TABLE_HEIGHT, TABLE_PADDING, TABLE_WIDTH, WALL_THICKNESS } from 'src/config/constants/pool.constants';
-import { BallGroup } from "@shared/game.types";
+import { BALL_NUMBERS, BALL_RADIUS, BALL_SPACING, CUE_BALL_POSITION_X, CUE_BALL_POSITION_Y, RACK_ORIGIN_X, RACK_ORIGIN_Y, SOLID_BALLS, STRIPED_BALLS, TABLE_HEIGHT, TABLE_PADDING, TABLE_WIDTH, WALL_THICKNESS } from '../../config/game.config';
 
 declare global {
   namespace Matter {
@@ -126,16 +125,4 @@ export function createPoolTableEngineEntities() {
     pockets: createPoolTablePockets(),
     balls: createPoolTableBalls()
   };
-}
-
-export function getBallGroup(number: number): BallGroup {
-  
-  if (number >= 1 && number <= 7)
-    return BallGroup.SOLIDS;
-  else if (number >= 9 && number <= 15)
-    return BallGroup.STRIPES;
-  else if (number === 8)
-    return BallGroup.EIGHT;
-  
-  return BallGroup.NONE; 
 }

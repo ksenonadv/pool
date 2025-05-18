@@ -3,7 +3,7 @@ import { WsException } from "@nestjs/websockets";
 import { ChatMessage, ClientGameEventData, ConnectionStateEventData, ServerEvent, SocketEvent } from "@shared/socket.types";
 import { Server, Socket } from "socket.io";
 import { UsersService } from "./users.service";
-import { POOL_GAME_MIN_PLAYERS, WAITING_ROOM_ID } from "src/config/constants/pool.constants";
+import { POOL_GAME_MIN_PLAYERS, WAITING_ROOM_ID } from "../config/game.config";
 import { Game } from "src/game/game";
 
 @Injectable()

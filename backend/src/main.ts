@@ -24,6 +24,7 @@ import * as bodyParser from 'body-parser';
 const maxPostSize = process.env.MAX_REQUEST_SIZE || '10mb';
 
 export async function bootstrap() {
+  
   const app = await NestFactory.create(AppModule);
   
   app.enableCors({ origin: '*'});  app.use(bodyParser.json({ limit: maxPostSize }));

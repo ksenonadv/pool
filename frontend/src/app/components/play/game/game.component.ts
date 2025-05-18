@@ -147,11 +147,13 @@ export class GameComponent implements OnInit, OnChanges {
         }
         case ServerEvent.GAME_OVER: {
 
-          const { message } = payload as GameOverEventData;
+          const { message, duration } = payload as GameOverEventData;
 
           this.router.navigate(['/']);
 
-          alert(message);
+          
+          
+
           break;
         }
       }

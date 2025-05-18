@@ -4,10 +4,10 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 module.exports = {
   target: 'node',
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  entry: './src/game/physics-worker.ts',
+  entry: './src/game/worker/index.ts',
   output: {
     path: path.resolve(__dirname, 'dist', 'worker'),
-    filename: 'physics-worker.js',
+    filename: 'index.js',
     clean: true, // Clean dist before emit
   },
   module: {
