@@ -9,6 +9,7 @@ import { TypeOrmConfigService } from './config/typeorm-config.service';
 import { AuthModule } from './modules/auth.module';
 import { UsersModule } from './modules/users.module';
 import { GameModule } from './modules/game.module';
+import { StatsModule } from './modules/stats.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { GameModule } from './modules/game.module';
     }),
     UsersModule,
     AuthModule,
-    GameModule
+    GameModule,
+    StatsModule
   ],
   controllers: [],
   providers: [AppService],

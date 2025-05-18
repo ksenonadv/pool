@@ -1,0 +1,71 @@
+<div class="w-full bg-white/5 rounded-lg shadow-md overflow-hidden">
+    <div class="bg-blue-950 p-6 text-white">
+      <h2 class="text-2xl font-bold">Your Statistics</h2>
+    </div>
+    
+    <div class="p-6 space-y-4">
+        @if (stats) {
+            <div class="grid grid-cols-2 gap-4">
+                <div class="stat-card">
+                    <div class="stat-title">Matches</div>
+                    <div class="stat-value">{{ stats.totalMatches }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Win Rate</div>
+                    <div class="stat-value">{{ stats.winRate | percent }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Wins</div>
+                    <div class="stat-value">{{ stats.wins }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Losses</div>
+                    <div class="stat-value">{{ stats.losses }}</div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-4">
+                <h3 class="text-xl font-semibold mb-3">Performance</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="stat-card">
+                        <div class="stat-title">Balls Pocketed</div>
+                        <div class="stat-value">{{ stats.totalBallsPocketed }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Shots Taken</div>
+                        <div class="stat-value">{{ stats.totalShotsTaken }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Fouls</div>
+                        <div class="stat-value">{{ stats.totalFouls }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Efficiency</div>
+                        <div class="stat-value">{{ stats.efficiency | percent }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-4">
+                <h3 class="text-xl font-semibold mb-3">Play Time</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="stat-card">
+                        <div class="stat-title">Average Match Duration</div>
+                        <div class="stat-value">{{ stats.averageMatchDuration | seconds }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Total Play Time</div>
+                        <div class="stat-value">{{ stats.totalPlayTime | seconds }}</div>
+                    </div>
+                </div>
+            </div>
+        } @else {
+            <div class="flex flex-col items-center justify-center p-6">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+                <p class="text-gray-300">
+                  Loading your statistics...
+                </p>
+            </div>
+        }
+    </div>
+</div>

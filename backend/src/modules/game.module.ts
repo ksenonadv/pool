@@ -4,12 +4,14 @@ import { GameGateway } from 'src/app.gateway';
 import { UsersModule } from './users.module';
 import { GameService } from 'src/services/game.service';
 import { GameCoreModule } from 'src/game/game-core.module';
+import { StatsModule } from './stats.module';
 
 @Module({
     imports: [
         JwtModule.register({}),
         UsersModule,
-        GameCoreModule
+        GameCoreModule,
+        StatsModule
     ],
     providers: [
         GameGateway, 

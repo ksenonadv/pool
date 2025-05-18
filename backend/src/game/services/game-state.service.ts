@@ -58,6 +58,13 @@ export class GameStateService {
     // Initialize player state
     this._players[0].ballGroup = undefined;
     this._players[1].ballGroup = undefined;
+
+    // Initialize player stats
+    this._players[0].shotsTaken = 0;
+    this._players[0].fouls = 0;
+
+    this._players[1].shotsTaken = 0;
+    this._players[1].fouls = 0;
     
     // Random initial player
     this._activePlayer = this._players[Math.random() > 0.5 ? 1 : 0];

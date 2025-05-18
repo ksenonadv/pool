@@ -10,4 +10,6 @@ export interface IGamePlayer {
   userId: string;
   socket: any; // Using 'any' for Socket to avoid circular dependencies
   ballGroup?: BallGroup;
-}
+  shotsTaken?: number;
+  fouls?: number;
+};

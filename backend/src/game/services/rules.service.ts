@@ -4,6 +4,7 @@ import { GameStateService } from './game-state.service';
 import { CommunicationService } from './communication.service';
 import { IGamePlayer } from '../interfaces/game-player.interface';
 import { GameOverReason, NameAndAvatar } from '@shared/socket.types';
+import { GameResultHandlerService } from './game-result-handler.service';
 
 /**
  * Injectable service that manages game rules
@@ -12,13 +13,15 @@ import { GameOverReason, NameAndAvatar } from '@shared/socket.types';
 export class RulesService {
   constructor(
     private readonly gameStateService: GameStateService,
-    private readonly communicationService: CommunicationService
+    private readonly communicationService: CommunicationService,
+    private readonly gameResultHandler: GameResultHandlerService
   ) {}
 
   /**
    * Handles a ball being pocketed
    */
   public handleBallPocketed(ballNumber: number): void {
+    
     if (ballNumber === 8)
       return this.handleEightBallPocketed();
 
@@ -45,6 +48,7 @@ export class RulesService {
    * Handles the cue ball being pocketed
    */
   public handleCueBallPocketed(): void {
+    this.gameStateService.activePlayer.fouls ++;
     this.gameStateService.shouldSwitchTurn = true;
   }
 
@@ -113,7 +117,6 @@ export class RulesService {
     this.gameStateService.activePlayer = player;
     this.communicationService.notifyTurnChange(player);
   }
-
   /**
    * Ends the game
    */
@@ -127,9 +130,20 @@ export class RulesService {
     if (!player)
       player = this.gameStateService.activePlayer;
 
+    // Notify clients about game over
     this.communicationService.notifyGameOver(
       reason, 
       player
+    );
+    
+    // Save match data only if it's a valid game outcome (not during setup/initialization)      
+    this.gameResultHandler.saveMatchResult(
+      this.gameStateService.players,
+      player,
+      this.gameStateService.getDuration(),
+      reason,
+      this.gameStateService.solidsRemaining,
+      this.gameStateService.stripesRemaining
     );
   }
 

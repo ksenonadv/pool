@@ -3,12 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationsService } from '../../services/notifications.service';
 import { SharedModule } from '../../modules/shared.module';
 import { UserService } from '../../services/user.service';
+import { StatsComponent } from "./stats/stats.component";
 
 @Component({
     selector: 'app-profile',
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.scss'],
-    imports: [SharedModule],
+    imports: [SharedModule, StatsComponent],
+    standalone: true
 })
 export class ProfileComponent {
 

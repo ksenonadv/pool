@@ -34,6 +34,12 @@
                     </a>
                   </li>
                   <li>
+                    <a [routerLink]="'/history'" class="button">
+                      <fa-icon [icon]="['fas', 'history']" class = "mr-1"></fa-icon>
+                      Match History
+                    </a>
+                  </li>
+                  <li>
                     <a (click)="logout()" class="button">
                       <fa-icon [icon]="['fas', 'key']" class = "mr-1"></fa-icon>
                       Logout

@@ -1,0 +1,15 @@
+.stat-card {
+  @apply bg-black/10 p-4 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors;
+}
+
+.stat-title {
+  @apply text-sm text-gray-300 mb-1;
+}
+
+.stat-value {
+  @apply text-xl font-semibold text-white;
+}
+
+h3 {
+  @apply text-gray-200;
+}

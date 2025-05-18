@@ -31,6 +31,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent),
   },
   {
+    path: 'history',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./components/match-history/match-history.component').then(m => m.MatchHistoryComponent),
+  },
+  {
     path: '**',
     redirectTo: '/home',
     pathMatch: 'full',

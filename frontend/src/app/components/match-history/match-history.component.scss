@@ -1,0 +1,59 @@
+.match-card {
+  @apply bg-black/10 p-4 rounded-lg border border-gray-700 mb-4 hover:border-gray-500 transition-colors;
+  
+  &.win {
+    @apply hover:border-green-500;
+    border-left: 4px solid rgb(34, 197, 94);
+  }
+  
+  &.loss {
+    @apply hover:border-red-500;
+    border-left: 4px solid rgb(239, 68, 68);
+  }
+}
+
+.outcome-badge {
+  @apply text-xs font-bold px-2 py-1 rounded-md;
+  
+  &.win {
+    @apply bg-green-900/50 text-green-400;
+  }
+  
+  &.loss {
+    @apply bg-red-900/50 text-red-400;
+  }
+}
+
+.stat-item {
+  @apply flex items-center text-sm text-gray-300;
+}
+
+.stats-summary {
+  @apply text-right;
+}
+
+:host ::ng-deep {
+  .paginator-custom {
+    
+    background-color: #121e44;
+    border: none;
+    border-radius: 0.5rem;
+    
+    .p-paginator-page,
+    .p-paginator-first,
+    .p-paginator-prev,
+    .p-paginator-next,
+    .p-paginator-last {
+      
+      color: #d1d5db;
+      background-color: rgba(39, 118, 230, 0.7);
+      border: 1px solid #374151;
+            
+      &.p-highlight {
+        background-color: #1d4ed8;
+        color: white;
+        border-color: #1e40af;
+      }
+    }
+  }
+}

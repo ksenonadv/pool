@@ -9,6 +9,7 @@ import { PhysicsService } from "./services/physics.service";
 import { CommunicationService } from "./services/communication.service";
 import { RulesService } from "./services/rules.service";
 import { GameStateManagerService } from "./services/game-state-manager.service";
+import { StatsService } from "src/services/stats.service";
 
 /**
  * Main Game class that coordinates all aspects of the pool game
@@ -29,9 +30,13 @@ export class Game {
     private readonly communicationService: CommunicationService,
     private readonly physicsService: PhysicsService,
     private readonly rulesService: RulesService,
-    private readonly gameStateManagerService: GameStateManagerService
+    private readonly gameStateManagerService: GameStateManagerService,
+    readonly statsService: StatsService
   ) {
     this.initialize();
+    this.rulesService['gameResultHandler'].setStatsService(
+      statsService
+    );
   }
 
   /**
@@ -77,13 +82,13 @@ export class Game {
   ): void {
     this.gameStateManagerService.processEvent(sender, event, data);
   }
-
   /**
    * Handles player disconnection
    */
   public handleDisconnect(socketId: string): void {
     this.gameStateManagerService.handleDisconnect(socketId);
   }
+  
   /**
    * Cleans up resources
    */

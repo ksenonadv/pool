@@ -4,8 +4,8 @@ import { ChatMessage, ClientGameEventData, ConnectionStateEventData, ServerEvent
 import { Server, Socket } from "socket.io";
 import { UsersService } from "./users.service";
 import { POOL_GAME_MIN_PLAYERS, WAITING_ROOM_ID } from "../config/game.config";
+import { StatsService } from "./stats.service";
 
-// Import game services
 import { Game } from "src/game/game";
 import { IGamePlayer } from "src/game/interfaces/game-player.interface";
 import { GameFactoryService } from "src/game/services/game-factory.service";
@@ -22,7 +22,8 @@ export class GameService {
   
   constructor(
     private readonly usersService: UsersService,
-    private readonly gameFactoryService: GameFactoryService
+    private readonly gameFactoryService: GameFactoryService,
+    private readonly statsService: StatsService
   ) { }
 
   public setServer(server: Server): void {
@@ -278,14 +279,16 @@ export class GameService {
 
     return this.usersService.findById(userId);
   }  private async createGame(player1: Socket, player2: Socket) {
-    try {
-      // Create game player objects
+    try {      // Create game player objects
       const gamePlayer1 = await this.createGamePlayer(player1);
       const gamePlayer2 = await this.createGamePlayer(player2);
       
       // Use the factory service to create a new game with isolated services
-      const game = this.gameFactoryService.createGame([gamePlayer1, gamePlayer2]);
-      
+      const game = this.gameFactoryService.createGame(
+        [gamePlayer1, gamePlayer2],
+        this.statsService
+      );
+            
       // Add to active games set
       this.games.add(game);
       
@@ -293,17 +296,14 @@ export class GameService {
       this.setRoom(player1 as unknown as Socket, game.id);
       this.setRoom(player2 as unknown as Socket, game.id);
       
-      // Setup cleanup when game ends
-      game.end$.subscribe(() => {
-        this.logger.log(`Game ${game.id} ended, cleaning up resources`);
-        this.games.delete(game);
-      });
-      
-      this.logger.log(`Created new game with ID: ${game.id}`);
+      game.end$.subscribe((data) => {
+        this.games.delete(
+          game
+        );
+      });   
+
     } catch (error) {
-      this.logger.error(`Failed to create game: ${error.message}`);
       throw new WsException(`Failed to create game: ${error.message}`);
     }
   }
-
 }

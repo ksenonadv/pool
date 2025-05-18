@@ -28,7 +28,9 @@ export class GameStateManagerService {
    * Initialize the manager with a message handler for the physics service
    */
   public initialize(): void {
-    this.physicsService.initialize(this.handleWorkerMessage.bind(this));
+    this.physicsService.initialize(this.handleWorkerMessage.bind(
+      this
+    ));
   }
   
   /**
@@ -81,6 +83,7 @@ export class GameStateManagerService {
     switch (event) {
       case ClientGameEvent.SHOOT: {
         this.gameStateService.currentPlayerPocketedBalls = false;
+        this.gameStateService.activePlayer.shotsTaken ++;
         this.physicsService.shoot(payload);
         break;  
       }

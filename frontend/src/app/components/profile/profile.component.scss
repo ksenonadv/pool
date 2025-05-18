@@ -1,15 +1,56 @@
-label {
-    @apply block text-sm font-medium text-gray-200 mb-1;
-}
+.profile {
+    @apply flex w-full flex-row items-start justify-center space-x-4 min-h-screen py-8 px-4;
 
-input[type="text"], input[type="password"] {
-    @apply w-full bg-black/10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition;
-}
+    &-card {
+        @apply w-1/2 max-w-4xl bg-white/5 rounded-lg shadow-md overflow-hidden;
 
-button {
-    @apply mt-2 w-full py-2 px-4 bg-blue-950 text-white rounded hover:bg-blue-900 disabled:hover:bg-blue-950 disabled:opacity-50;
-}
+        .header {
+            @apply bg-blue-950 p-6 text-white
+        }
 
-.error {
-    @apply text-red-600 text-sm mt-1;
+        .content {
+            @apply p-6 space-y-6;
+        }
+
+        .row {
+            @apply flex flex-col items-center space-y-4;
+        }
+
+        .avatar {
+            @apply relative w-24 h-24 cursor-pointer;
+
+            .image {
+                @apply w-24 h-24 rounded-full object-cover border-4 border-blue-950;
+            }
+
+            &-icon {
+                @apply absolute inset-0 bg-black/50 rounded-full flex items-center justify-center transition-opacity;
+            }
+        }
+    }
+
+    .stats-and-history {
+        @apply w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-6;
+    }
+
+    .stats-card, .history-card {
+        @apply w-full;
+    }
+
+    label {
+        @apply block text-sm font-medium text-gray-200 mb-1;
+    }
+
+    input[type="text"], input[type="password"] {
+        @apply w-full bg-black/10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition;
+    }
+
+    button {
+        @apply mt-2 w-full py-2 px-4 bg-blue-950 text-white rounded hover:bg-blue-900 disabled:hover:bg-blue-950 disabled:opacity-50;
+    }
+
+    .error {
+        @apply text-red-600 text-sm mt-1;
+    }
+
 }

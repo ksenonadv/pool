@@ -6,6 +6,8 @@ import { CommunicationService } from './communication.service';
 import { PhysicsService } from './physics.service';
 import { RulesService } from './rules.service';
 import { GameStateManagerService } from './game-state-manager.service';
+import { GameResultHandlerService } from './game-result-handler.service';
+import { StatsService } from 'src/services/stats.service';
 
 /**
  * Factory service for creating game instances with their own isolated services
@@ -17,12 +19,18 @@ export class GameFactoryService {
    * @param players The two players that will participate in the game
    * @returns A new Game instance with isolated services
    */
-  createGame(players: [IGamePlayer, IGamePlayer]): Game {
+  createGame(
+    players: [IGamePlayer, IGamePlayer], 
+    statsService: StatsService
+  ): Game {
+    
     // Create isolated service instances for this game
+    
     const gameStateService = new GameStateService();
     const communicationService = new CommunicationService(gameStateService);
     const physicsService = new PhysicsService();
-    const rulesService = new RulesService(gameStateService, communicationService);
+    const gameResultHandler = new GameResultHandlerService();
+    const rulesService = new RulesService(gameStateService, communicationService, gameResultHandler);
     const gameStateManagerService = new GameStateManagerService(
       gameStateService,
       rulesService,
@@ -37,7 +45,8 @@ export class GameFactoryService {
       communicationService,
       physicsService,
       rulesService,
-      gameStateManagerService
+      gameStateManagerService,
+      statsService
     );
   }
 }
