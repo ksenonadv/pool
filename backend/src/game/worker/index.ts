@@ -45,7 +45,6 @@ parentPort.on('message', (message: MainProcessMesssage) => {
 
 function initializePhysics() {
 
-  // Create physics engine with no gravity
   state.engine = Engine.create({
     gravity: {
       x: 0,
@@ -53,10 +52,8 @@ function initializePhysics() {
     }
   });
 
-  // Create table entities
   const { balls, pockets, walls } = createPoolTableEngineEntities();
 
-  // Add bodies to the world
   Composite.add(
     state.engine.world,
     [
@@ -66,18 +63,15 @@ function initializePhysics() {
     ]
   );
 
-  // Set up ball collection and other state
   state.balls = new Set(balls);
   state.ballsMoving = false;
 
-  // Set up collision events
   Events.on(
     state.engine, 
     'collisionStart', 
     handleCollision
   );
 
-  // Start the physics loop
   state.interval = setInterval(
     update, 
     1000 / FRAME_RATE
@@ -86,13 +80,11 @@ function initializePhysics() {
 
 function update() {
 
-  // Update physics engine
   Engine.update(
     state.engine,
     1000 / FRAME_RATE
   );
 
-  // Send ball positions to main thread
   parentPort.postMessage({
     type: WorkerProcessMessageType.UPDATE_BALLS,
     payload: Array.from(state.balls).map(
@@ -107,7 +99,6 @@ function update() {
     )
   });
 
-  // Check if balls have stopped moving
   if (state.ballsMoving) {
     
     const anyBallMoving = Array.from(state.balls).some(
@@ -122,8 +113,6 @@ function update() {
         type: WorkerProcessMessageType.MOVEMENT_END
       });
 
-      // The cue ball was pocketed, place it back.
-      // on the table ...
       if (state.shouldPlaceBackCueBall) {
         placeBackCueBall();
       }
@@ -137,7 +126,6 @@ function handleShoot(payload: ShootEventData) {
 
   const { mouseX, mouseY, power } = payload;
 
-  // If balls are already moving, do nothing
   if (state.ballsMoving) 
     return;
     
@@ -180,7 +168,6 @@ function handleCollision(event: Matter.IEventCollision<Matter.Engine>) {
       ball => ball.ballNumber === ballNumber
     );
 
-    // Cue ball
     if (ballNumber === 0) { 
       
       parentPort.postMessage({
@@ -188,10 +175,9 @@ function handleCollision(event: Matter.IEventCollision<Matter.Engine>) {
       });    
 
       removeBall(ball);
-
       state.shouldPlaceBackCueBall = true;
     } 
-    else { // Regular numbered ball
+    else {
       
       parentPort.postMessage({
         type: WorkerProcessMessageType.BALL_POCKETED,
