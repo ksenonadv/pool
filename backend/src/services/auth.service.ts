@@ -51,6 +51,12 @@ export class AuthService {
       );
     }
 
+    if (user.discordId) {
+      throw new BadRequestException(
+        'User is registered with Discord'
+      );
+    }
+
     const passwordMatches = await argon2.verify(user.password, data.password);
     
     if (!passwordMatches) {

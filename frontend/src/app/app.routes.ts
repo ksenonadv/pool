@@ -29,11 +29,14 @@ export const routes: Routes = [
   {
     path: 'home',
     loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent),
-  },
-  {
+  },  {
     path: 'history',
     canActivate: [AuthGuard],
     loadComponent: () => import('./components/match-history/match-history.component').then(m => m.MatchHistoryComponent),
+  },
+  {
+    path: 'rankings',
+    loadComponent: () => import('./components/rankings/rankings.component').then(m => m.RankingsComponent),
   },
   {
     path: '**',

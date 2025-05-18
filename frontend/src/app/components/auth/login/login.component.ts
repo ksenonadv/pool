@@ -32,7 +32,7 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
         this.notifications.success('Login', 'You are now logged in.');
-        this.route.navigate(['/play']);
+        this.route.navigate(['/home']);
       },
       error: err => {
         this.notifications.error('Login', err.message);

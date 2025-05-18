@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 
-import { MatchHistoryResult, UserStats } from "@shared/stats.types";
+import { MatchHistoryResult, PlayerRankingsResult, UserStats } from "@shared/stats.types";
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +20,12 @@ export class StatsService {
   public getHistory(page: number = 1, limit: number = 25) {
     return this.http.get<MatchHistoryResult>(
       `${environment.apiUrl}/stats/player/history?page=${page}&limit=${limit}`
+    );
+  }
+
+  public getRankings(page: number = 1, limit: number = 25) {
+    return this.http.get<PlayerRankingsResult>(
+      `${environment.apiUrl}/stats/rankings?page=${page}&limit=${limit}`
     );
   }
 

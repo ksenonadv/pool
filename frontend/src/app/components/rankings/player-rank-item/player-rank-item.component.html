@@ -1,0 +1,70 @@
+
+<div class="grid grid-cols-12 gap-4 p-4 border-b border-blue-900/30 hover:bg-blue-900/30 transition-colors duration-200">
+
+  <div class="col-span-1 flex items-center justify-center">
+    <div 
+      class="flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm"
+      [ngClass]="{
+        'bg-yellow-500/20 text-yellow-400': rank === 1,
+        'bg-gray-400/20 text-gray-300': rank === 2,
+        'bg-amber-600/20 text-amber-400': rank === 3
+      }"
+    >
+      {{ rank }}
+    </div>
+  </div>
+  
+  <!-- Player info -->
+  <div class="col-span-3 flex items-center space-x-3">
+    <img 
+      [src]="player.avatar || '/assets/images/default-avatar.png'" 
+      [alt]="player.username + ' avatar'"
+      class="w-8 h-8 rounded-full object-cover border border-blue-800"
+    >
+    <span class="font-medium text-gray-200">{{ player.username }}</span>
+  </div>
+  
+  <!-- Win rate -->
+  <div class="col-span-2 flex flex-col items-center justify-center">
+    <span 
+      class="font-bold"
+      [ngClass]="{
+        'text-green-400': player.winRate >= 50,
+        'text-blue-400': player.winRate < 50 && player.winRate >= 45,
+        'text-red-400': player.winRate < 45
+      }"
+    >{{ player.winRate }}%</span>
+    <span class="text-xs text-gray-400">Win Rate</span>
+  </div>
+  
+  <!-- Match count -->
+  <div class="col-span-2 flex items-center justify-center">
+    <div class="text-center">
+      <span class="text-gray-200 font-medium">{{ player.totalMatches }}</span> <br>
+      <span class="text-xs">
+        <span class = "text-green-600">{{ player.wins }} W</span> / <span class = "text-red-600">{{ player.losses }} L</span>
+      </span>
+    </div>
+  </div>
+  
+  <!-- Efficiency -->
+  <div class="col-span-2 flex flex-col items-center justify-center">
+    <span
+      class="font-bold"
+      [ngClass]="{
+        'text-green-400': player.efficiency >= 50,
+        'text-blue-400': player.efficiency < 50 && player.efficiency >= 45,
+        'text-red-400': player.efficiency < 45
+      }"
+    >{{ player.efficiency | number:'1.0-2' }}%</span>
+    <span class="text-xs text-gray-400">Efficiency</span>
+  </div>
+  
+  <!-- Average match time -->
+  <div class="col-span-2 flex items-center justify-center">
+    <div class="text-center">
+      <span class="text-gray-200 font-medium">{{ player.averageMatchDuration | seconds:true }}</span>
+      <div class="text-xs text-gray-400">Avg. Duration</div>
+    </div>
+  </div>
+</div>

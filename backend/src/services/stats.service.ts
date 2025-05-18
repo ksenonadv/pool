@@ -7,7 +7,7 @@ import { PlayerStats } from '../entities/player-stats.entity';
 import { User } from '../entities/user.entity';
 import { IGamePlayer } from 'src/game/interfaces/game-player.interface';
 import { GameOverReason } from '@shared/socket.types';
-import { MatchHistoryResult, UserStats } from '@shared/stats.types';
+import { MatchHistoryResult, PlayerRankingsResult, UserStats } from '@shared/stats.types';
 
 @Injectable()
 export class StatsService {  constructor(
@@ -133,12 +133,7 @@ export class StatsService {  constructor(
   /**
    * Get player rankings
    */
-  async getPlayerRankings(page: number = 1, limit: number = 10): Promise<{
-    players: any[],
-    total: number,
-    page: number,
-    totalPages: number
-  }> {
+  async getPlayerRankings(page: number = 1, limit: number = 10): Promise<PlayerRankingsResult> {
     
     const [players, total] = await this.playerStatsRepository.findAndCount({
       relations: ['user'],

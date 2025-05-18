@@ -1,0 +1,23 @@
+:host ::ng-deep {
+  .paginator-custom {
+    background-color: #121e44;
+    border: none;
+    border-radius: 0.5rem;
+    
+    .p-paginator-page,
+    .p-paginator-first,
+    .p-paginator-prev,
+    .p-paginator-next,
+    .p-paginator-last {
+      color: #d1d5db;
+      background-color: rgba(39, 118, 230, 0.7);
+      border: 1px solid #374151;
+            
+      &.p-highlight {
+        background-color: #1d4ed8;
+        color: white;
+        border-color: #1e40af;
+      }
+    }
+  }
+}

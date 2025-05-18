@@ -1,5 +1,5 @@
 .profile {
-    @apply flex w-full flex-row items-start justify-center space-x-4 min-h-screen py-8 px-4;
+    @apply flex w-full flex-row items-start justify-center space-x-4 py-8 px-4;
 
     &-card {
         @apply w-1/2 max-w-4xl bg-white/5 rounded-lg shadow-md overflow-hidden;

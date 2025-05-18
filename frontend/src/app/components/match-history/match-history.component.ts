@@ -31,9 +31,13 @@ export class MatchHistoryComponent implements OnInit {
   }
 
   public loadHistory(page: number = 1): void {
+
+    this.loading = true;
+
     this.statsService.getHistory(page, this.rows).subscribe({
       next: (result) => {
         this.history = result;
+        this.loading = false;
       }
     });
   }

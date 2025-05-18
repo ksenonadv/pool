@@ -3,36 +3,36 @@
     <h2 class="text-2xl font-bold">Match History</h2>
   </div>
   
-  <div class="p-6">
-    
-    <p-paginator 
-      (onPageChange)="onPageChange($event)" 
-      [first]="first" 
-      [rows]="rows" 
-      [totalRecords]="history.total" 
-      styleClass="paginator-custom mb-2"
-    />
-
-    @if (history.matches.length === 0) {
-      <div class="text-center p-6">
-        <fa-icon [icon]="['fas', 'trophy']" class="text-gray-400 text-5xl mb-4"></fa-icon>
-        <p class="text-gray-300">
-          You haven't played any matches yet.
-        </p>
-        <button routerLink="/play" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-          Start Playing
-        </button>
-      </div>
-    } @else {
-      <div class="space-y-4">
-        <div class="overflow-hidden">
-          @for (match of history.matches; track match.matchId) {
-            <app-match 
-              [match]="match"
-            ></app-match>
-          }
+  @if (!loading) {
+    <div class="p-6">
+      
+      @if (history.matches.length === 0) {
+        <div class="text-center p-6">
+          <fa-icon [icon]="['fas', 'trophy']" class="text-gray-400 text-5xl mb-4"></fa-icon>
+          <p class="text-gray-300">
+            You haven't played any matches yet.
+          </p>
         </div>
-      </div>
-    }
-  </div>
+      } @else {
+
+        <p-paginator 
+          (onPageChange)="onPageChange($event)" 
+          [first]="first" 
+          [rows]="rows" 
+          [totalRecords]="history.total" 
+          styleClass="paginator-custom mb-2"
+        />
+
+        <div class="space-y-4">
+          <div class="overflow-hidden">
+            @for (match of history.matches; track match.matchId) {
+              <app-match 
+                [match]="match"
+              ></app-match>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
 </div>

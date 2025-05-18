@@ -23,7 +23,7 @@ export class AuthCallbackComponent implements OnInit {
             if (accessToken && refreshToken) {
                 this.authService.handleAuthCallback(accessToken, refreshToken);
                 this.notifications.success('Login', 'Successfully logged in with Discord');
-                this.router.navigate(['/play']);
+                this.router.navigate(['/home']);
             } else {
                 this.notifications.error('Login', 'Authentication failed');
                 this.router.navigate(['/login']);

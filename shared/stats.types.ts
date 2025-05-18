@@ -5,10 +5,10 @@ export type UserStats = {
   winRate: number;
   totalBallsPocketed: number;
   totalShotsTaken: number;
-  totalFouls: number;
+  totalFouls?: number;
   efficiency: number;
   averageMatchDuration: number;
-  totalPlayTime: number;
+  totalPlayTime?: number;
 };
 
 export type MatchHistory = {
@@ -32,6 +32,17 @@ export type MatchHistory = {
 
 export type MatchHistoryResult = {
   matches: Array<MatchHistory>;
+  total: number;
+  page: number;
+  totalPages: number;
+};
+
+export type PlayerRankingsResult = {
+  players: Array<{
+    userId: string;
+    username: string;
+    avatar: string;
+  } & UserStats>;
   total: number;
   page: number;
   totalPages: number;

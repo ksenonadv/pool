@@ -1,4 +1,4 @@
-<div class="w-full flex flex-col items-center justify-center bg-blue-950/80 rounded-xl shadow-lg mx-auto mt-12 px-8 py-4">
+<div class="w-full flex flex-col items-center justify-center bg-white/5 rounded-xl shadow-lg mx-auto mt-12 px-8 py-6">
   
   <img src="/assets/images/logo.png" alt="Logo" class="w-32 mx-auto mb-4">
 
@@ -6,10 +6,35 @@
     Cue Frenzy
   </div>
 
-  <div class="text-lg text-blue-200 mb-8 text-center">
-    Play billiards with your friend in real-time. <br>
-    No need to install anything, just open your browser and play!
+  <div class="rounded-lg p-6 min-w-fit mb-8 text-center bg-blue-950">
+    <div class="text-xl font-semibold text-blue-100 mb-3 flex items-center justify-center gap-2">
+      <svg class="w-6 h-6 text-blue-300 inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+        <circle cx="12" cy="12" r="4" fill="currentColor"/>
+      </svg>
+      Game Rules
+    </div>
+    <ul class="text-blue-200 text-base mb-5 space-y-1 text-left mx-auto list-disc list-inside">
+      <li>The game is played with 15 object balls and a cue ball.</li>
+      <li>Players are assigned either <span class="text-blue-300 font-medium">solids (1-7)</span> or <span class="text-blue-400 font-medium">stripes (9-15)</span> after the break.</li>
+      <li>Pocket all your group of balls, then legally pocket the <span class="text-yellow-300 font-bold">8-ball</span> to win.</li>
+      <li>Fouls include scratching the cue ball or failing to hit your own group first.</li>
+    </ul>
+    <div class="text-lg font-semibold text-blue-100 mb-2 flex items-center justify-center gap-2">
+      <svg class="w-5 h-5 text-blue-300 inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/>
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+      </svg>
+      How to Play
+    </div>
+    <ol class="text-blue-200 text-base space-y-1 text-left mx-auto list-decimal list-inside">
+      <li>Click <span class="font-semibold text-blue-400">"Play Now"</span> to start a new game.</li>
+      <li>Use your mouse or finger to aim and shoot.</li>
+      <li>Try to pocket your assigned balls before your opponent.</li>
+      <li>Pocket the <span class="text-yellow-300 font-bold">8-ball</span> last to win!</li>
+    </ol>
   </div>
-  <a routerLink="/play" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-xl text-xl shadow transition-all duration-200">Play Now</a>
-  <div class="mt-8 text-blue-300 text-sm">Made with ❤️ using Angular, NestJS, and Matter.js</div>
+  <a routerLink="/play" class="py-2 px-4 bg-blue-900 text-white rounded hover:bg-blue-800">
+    Start Playing
+  </a>
 </div>
