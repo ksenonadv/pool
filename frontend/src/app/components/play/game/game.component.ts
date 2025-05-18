@@ -277,15 +277,18 @@ export class GameComponent implements OnInit, OnChanges {
   }
 
   private drawCue(cue_ball: Ball): void {
-    
+
     if (!cue_ball || !this.cueData || this.ballsMoving)
       return;
 
     const img = this.assets!['cue'];
     const { position } = cue_ball;
 
+    // Calculate angle from cue ball to mouse, then reverse it by adding Math.PI
+    const angle = Math.atan2(this.cueData!.mouseY - position.y, this.cueData!.mouseX - position.x) + Math.PI;
+
+    // Padding is still based on power, but now cue is drawn in the opposite direction
     const padding = TABLE_PADDING + (this.cueData.power / 100 * 35);
-    const angle = Math.atan2(this.cueData!.mouseY - position.y, this.cueData!.mouseX - position.x);
 
     this.ctx!.save();
     this.ctx!.translate(position.x, position.y); // Move origin to cue ball center
@@ -293,10 +296,10 @@ export class GameComponent implements OnInit, OnChanges {
 
     this.ctx!.drawImage(
       img,
-      padding,                  
-      -CUE_SIZE / 2,          
-      CUE_SIZE,           
-      CUE_SIZE                
+      padding,
+      -CUE_SIZE / 2,
+      CUE_SIZE,
+      CUE_SIZE
     );
 
     this.ctx!.restore();
