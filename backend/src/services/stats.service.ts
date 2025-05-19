@@ -19,7 +19,7 @@ export class StatsService {  constructor(
     private playerStatsRepository: Repository<PlayerStats>,
     @InjectRepository(User)
     private userRepository: Repository<User>
-  ) {}
+  ) { }
 
   /**
    * Save a completed match and update player statistics
@@ -36,14 +36,16 @@ export class StatsService {  constructor(
       ballGroup: any 
     }>
   ): Promise<Match> {
-    // Create match record
+    
     const match = this.matchRepository.create({
       durationSeconds,
       winnerId: winner?.userId,
       gameOverReason: gameOverReason.toString()
     });
 
-    await this.matchRepository.save(match);
+    await this.matchRepository.save(
+      match
+    );
 
     // Create match player records
     for (const player of players) {
@@ -69,8 +71,12 @@ export class StatsService {  constructor(
 
       await this.matchPlayerRepository.save(matchPlayer);
 
-      // Update player stats
-      await this.updatePlayerStats(player.userId, stats, isWinner, durationSeconds);
+      await this.updatePlayerStats(
+        player.userId, 
+        stats, 
+        isWinner, 
+        durationSeconds
+      );
     }
 
     return match;
@@ -91,7 +97,10 @@ export class StatsService {  constructor(
   ): Promise<void> {
     
     // Get existing stats or create new ones
-    let playerStats = await this.playerStatsRepository.findOne({ where: { userId } });
+    let playerStats = await this.playerStatsRepository.findOne({ where: { 
+        userId 
+      } 
+    });
     
     if (!playerStats) {
       playerStats = this.playerStatsRepository.create({
@@ -115,16 +124,12 @@ export class StatsService {  constructor(
     playerStats.totalFouls += matchStats.fouls;
     playerStats.totalPlayTime += durationSeconds;
 
-    if (isWinner) {
-      playerStats.wins += 1;
-    } else {
-      playerStats.losses += 1;
-    }
+    if (isWinner)
+      playerStats.wins ++;
+    else
+      playerStats.losses --;
 
-    // Calculate win rate
-    playerStats.winRate = playerStats.wins / playerStats.totalMatches;
-    
-    // Calculate average match duration
+    playerStats.winRate = playerStats.wins / playerStats.totalMatches;    
     playerStats.averageMatchDuration = playerStats.totalPlayTime / playerStats.totalMatches;
 
     await this.playerStatsRepository.save(playerStats);
@@ -160,7 +165,9 @@ export class StatsService {  constructor(
       players: formattedPlayers,
       total,
       page,
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(
+        total / limit
+      )
     };
   }
   
@@ -181,31 +188,31 @@ export class StatsService {  constructor(
       skip: (page - 1) * limit
     });
 
-    const formattedMatches = matchPlayers.map(mp => {
-      const match = mp.match;
-      const opponent = match.matchPlayers.find(p => p.userId !== userId);
-      return {
-        matchId: match.id,
-        playedAt: match.playedAt,
-        durationSeconds: match.durationSeconds,
-        gameOverReason: match.gameOverReason,
-        isWinner: mp.isWinner,
-        opponent: {
-          userId: opponent?.userId,
-          username: opponent?.user?.username,
-          avatar: opponent?.user?.avatar
-        },
-        playerStats: {
-          ballGroup: mp.ballGroup,
-          ballsPocketed: mp.ballsPocketed,
-          shotsTaken: mp.shotsTaken,
-          fouls: mp.fouls
-        }
-      };
-    });
-
     return {
-      matches: formattedMatches,
+      matches: matchPlayers.map(mp => {
+        
+        const match = mp.match;
+        const opponent = match.matchPlayers.find(p => p.userId !== userId);
+
+        return {
+          matchId: match.id,
+          playedAt: match.playedAt,
+          durationSeconds: match.durationSeconds,
+          gameOverReason: match.gameOverReason,
+          isWinner: mp.isWinner,
+          opponent: {
+            userId: opponent?.userId,
+            username: opponent?.user?.username,
+            avatar: opponent?.user?.avatar
+          },
+          playerStats: {
+            ballGroup: mp.ballGroup,
+            ballsPocketed: mp.ballsPocketed,
+            shotsTaken: mp.shotsTaken,
+            fouls: mp.fouls
+          }
+        };
+      }),
       total,
       page,
       totalPages: Math.ceil(
@@ -220,7 +227,9 @@ export class StatsService {  constructor(
   async getPlayerStatistics(userId: string): Promise<UserStats> {
     
     const playerStats = await this.playerStatsRepository.findOne({ 
-      where: { userId }
+      where: { 
+        userId 
+      }
     });
 
     if (!playerStats) {
