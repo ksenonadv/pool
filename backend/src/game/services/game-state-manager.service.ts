@@ -37,9 +37,15 @@ export class GameStateManagerService {
    * Handles worker messages
    */
   public handleWorkerMessage(message: WorkerProcessMessage): void {
+    
     switch (message.type) {
-      case WorkerProcessMessageType.UPDATE_BALLS:
-        this.communicationService.notifyBallsUpdate(message.payload);
+      
+      case WorkerProcessMessageType.SYNC_BALLS:
+        this.communicationService.sendBallsSync(message.payload);
+        break;
+
+      case WorkerProcessMessageType.SYNC_MOVING_BALLS:
+        this.communicationService.sendMovingBallsSync(message.payload);
         break;
       
       case WorkerProcessMessageType.MOVEMENT_START:
@@ -59,6 +65,7 @@ export class GameStateManagerService {
       
       case WorkerProcessMessageType.CUE_BALL_POCKETED:
         this.rulesService.handleCueBallPocketed();
+        this.communicationService.notifyCueBallPocketed();
         break;
     }
   }

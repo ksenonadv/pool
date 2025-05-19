@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { 
+  Ball,
   ChatMessage, 
   ConnectionStateEventData, 
   GameOverReason, 
@@ -133,6 +134,15 @@ export class CommunicationService {
     );
   }
 
+  public notifyCueBallPocketed(): void {
+    this.broadcast(
+      SocketEvent.SERVER_GAME_EVENT,
+      {
+        event: ServerEvent.CUE_BALL_POCKETED,
+      }
+    );
+  }
+
   /**
    * Notifies about ball group assignment
    */
@@ -154,11 +164,21 @@ export class CommunicationService {
   /**
    * Notifies about ball movements
    */
-  public notifyBallsUpdate(ballsData: any): void {
+  public sendBallsSync(ballsData: Array<Ball>): void {
     this.broadcast(
       SocketEvent.SERVER_GAME_EVENT,
       {
-        event: ServerEvent.UPDATE_BALLS,
+        event: ServerEvent.BALLS_SYNC,
+        data: ballsData
+      }
+    );
+  }
+
+  public sendMovingBallsSync(ballsData: Array<Ball>): void {
+    this.broadcast(
+      SocketEvent.SERVER_GAME_EVENT,
+      {
+        event: ServerEvent.MOVING_BALLS_SYNC,
         data: ballsData
       }
     );

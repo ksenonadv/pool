@@ -13,7 +13,9 @@ export type MainProcessMesssage =
   | { type: MainProcessMessageType.STOP };
 
 export const enum WorkerProcessMessageType {
-  UPDATE_BALLS = 'UPDATE_BALLS',
+  SYNC_BALLS = 'SYNC_BALLS',
+  SYNC_MOVING_BALLS = 'SYNC_MOVING_BALLS',
+  DELETE_BALL = 'DELETE_BALL',
   MOVEMENT_START = 'MOVEMENT_START',
   MOVEMENT_END = 'MOVEMENT_END',
   BALL_POCKETED = 'BALL_POCKETED',
@@ -23,7 +25,8 @@ export const enum WorkerProcessMessageType {
 };
 
 export type WorkerProcessMessage = 
-  | { type: WorkerProcessMessageType.UPDATE_BALLS, payload: Array<Ball> }
+  | { type: WorkerProcessMessageType.SYNC_BALLS, payload: Array<Ball> }
+  | { type: WorkerProcessMessageType.SYNC_MOVING_BALLS, payload: Array<Ball> }
   | { type: WorkerProcessMessageType.MOVEMENT_START }
   | { type: WorkerProcessMessageType.MOVEMENT_END }
   | { type: WorkerProcessMessageType.BALL_POCKETED, payload: { ballNumber: number }  }

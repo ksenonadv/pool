@@ -112,8 +112,27 @@ export class GameComponent implements OnInit, OnChanges {
           this.cdr.detectChanges();
           break;
         }
-        case ServerEvent.UPDATE_BALLS: {
+        case ServerEvent.BALLS_SYNC: {
           this.balls = payload as Array<Ball>;
+          break;
+        }
+        case ServerEvent.MOVING_BALLS_SYNC: {
+
+          if (!this.balls)
+            return;
+
+          const movingBalls = payload as Array<Ball>;
+
+          for (let ball of this.balls) {
+            
+            const movingBall = movingBalls.find((movingBall) => movingBall.no === ball.no);
+
+            if (movingBall) {
+              ball.position = movingBall.position;
+              ball.angle = movingBall.angle;
+            }
+          }
+
           break;
         }
         case ServerEvent.SET_CAN_SHOOT: {
@@ -147,8 +166,19 @@ export class GameComponent implements OnInit, OnChanges {
             );
           }
 
+          this.balls = this.balls.filter(
+            (b) => b.no !== ball
+          );
+
           break;
-        }        
+        }   
+        
+        case ServerEvent.CUE_BALL_POCKETED: {
+          this.balls = this.balls.filter(
+            (b) => b.no !== 0
+          );
+          break;
+        }
         
         case ServerEvent.GAME_OVER: {
 

@@ -52,6 +52,7 @@ export class RulesService {
   public handleCueBallPocketed(): void {
     this.gameStateService.activePlayer.fouls ++;
     this.gameStateService.shouldSwitchTurn = true;
+    this.communicationService.notifyCueBallPocketed();
   }
 
   /**

@@ -29,13 +29,15 @@ export type ClientGameEventData = {
 export enum ServerEvent {
   SET_PLAYERS = 'set-players-data',
   SET_CAN_SHOOT = 'set-can-shoot',
-  UPDATE_BALLS = 'update-balls',
+  BALLS_SYNC = 'full-balls-sync',
+  MOVING_BALLS_SYNC = 'moving-balls-sync',
   SYNC_CUE = 'sync-cue',
   MOVEMENT_START = 'movement-start',
   MOVEMENT_END = 'movement-end',
   SET_BALL_GROUP = 'set-ball-group',
   GAME_OVER = 'game-over',
   BALL_POCKETED = 'ball-pocketed',
+  CUE_BALL_POCKETED = 'cue-ball-pocketed',
 };
 
 export type ServerGameEventData = {
