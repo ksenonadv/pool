@@ -71,7 +71,7 @@ export class RulesService {
     const hasBallsLeft = activePlayer.ballGroup === BallGroup.SOLIDS && this.gameStateService.solidsRemaining.size > 0 ||
         activePlayer.ballGroup === BallGroup.STRIPES && this.gameStateService.stripesRemaining.size > 0;
 
-    if (!hasBallsLeft) {
+    if (hasBallsLeft) {
       this.endGame(
         GameOverReason.FAULT
       );
