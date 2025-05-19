@@ -3,12 +3,13 @@ import { Socket } from "ngx-socket-io";
 import { ChatMessage, ClientGameEvent, ClientGameEventData, ConnectionStateEventData, ShootEventData, SocketEvent } from "@shared/socket.types";
 import { BehaviorSubject, Subject } from "rxjs";
 import { ConnectionState } from "../interfaces/connection-state";
+import { GameSocket } from "../app.socket.config";
 
 @Injectable()
 export class PoolSocketService implements OnDestroy {
 
   private readonly socket: Socket = inject(
-    Socket
+    GameSocket
   );
 
   private state: BehaviorSubject<ConnectionState> = new BehaviorSubject<ConnectionState>(

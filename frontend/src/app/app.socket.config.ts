@@ -1,18 +1,31 @@
-import { inject } from '@angular/core';
-import { SocketIoConfig, provideSocketIo, Socket, SOCKET_CONFIG_TOKEN } from 'ngx-socket-io';
+import { inject, Injectable } from '@angular/core';
+import { Socket, SOCKET_CONFIG_TOKEN, SocketIoConfig } from 'ngx-socket-io';
 import { AuthService } from './services/auth.service';
-import { environment } from '../environments/environment';
+import { ConfigService } from './services/config.service';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class GameSocket extends Socket {
+
+    constructor(
+        configService: ConfigService,
+        authService: AuthService
+    ) 
+    {
+        super({
+            url: configService.apiUrl + '/pool',
+            options: {
+                autoConnect: false,
+                auth: {
+                    token: authService.getAccessToken()!
+                }
+            }
+        } as SocketIoConfig);     
+    }
+}
 
 export const provideSocket = [
-    provideSocketIo({
-        url: `${environment.apiUrl}/pool`,
-        options: {
-            autoConnect: false,
-            auth: {
-                token: localStorage.getItem('access_token')
-            }
-        }
-    } as SocketIoConfig),
     {
         provide: Socket,
         useFactory: () => {

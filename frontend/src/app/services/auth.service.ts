@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, catchError, tap, throwError, of } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { ConfigService } from './config.service';
 
 export interface AuthResponse {
   accessToken: string;
@@ -10,9 +10,15 @@ export interface AuthResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = environment.apiUrl + '/auth';
+
+
+  private readonly config = inject(ConfigService);
+
+  private apiUrl = this.config.apiUrl + '/auth';
+
   private accessTokenKey = 'access_token';
   private refreshTokenKey = 'refresh_token';
+  
   private loggedIn$ = new BehaviorSubject<boolean>(this.hasTokens());
 
   constructor(private http: HttpClient) {}

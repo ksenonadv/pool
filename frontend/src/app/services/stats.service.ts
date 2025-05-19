@@ -1,8 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { environment } from "src/environments/environment";
 
 import { MatchHistoryResult, PlayerRankingsResult, UserStats } from "@shared/stats.types";
+import { ConfigService } from "./config.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,22 +10,25 @@ import { MatchHistoryResult, PlayerRankingsResult, UserStats } from "@shared/sta
 export class StatsService {
 
   private readonly http: HttpClient = inject(HttpClient);
+  private readonly config = inject(ConfigService);
+
+  private apiUrl = this.config.apiUrl + '/stats';
 
   public getStats() {
     return this.http.get<UserStats>(
-      `${environment.apiUrl}/stats/player`
+      `${this.apiUrl}/player`
     );
   }
 
   public getHistory(page: number = 1, limit: number = 25) {
     return this.http.get<MatchHistoryResult>(
-      `${environment.apiUrl}/stats/player/history?page=${page}&limit=${limit}`
+      `${this.apiUrl}/player/history?page=${page}&limit=${limit}`
     );
   }
 
   public getRankings(page: number = 1, limit: number = 25) {
     return this.http.get<PlayerRankingsResult>(
-      `${environment.apiUrl}/stats/rankings?page=${page}&limit=${limit}`
+      `${this.apiUrl}/rankings?page=${page}&limit=${limit}`
     );
   }
 
