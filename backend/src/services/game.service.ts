@@ -91,6 +91,17 @@ export class GameService {
    * Add a client to a specific room
    */
   private setRoom(client: Socket, roomId: string): void {
+
+    
+    // Remove from any previous room
+    const previousRoomId = this.socketToRoomId.get(client.id);
+    if (previousRoomId) {
+      client.leave(
+        previousRoomId
+      );
+    }
+
+
     this.socketToRoomId.set(client.id, roomId);
     client.join(roomId);
   }
