@@ -1,20 +1,6 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-// Register tsconfig paths
-import * as tsconfig from 'tsconfig-paths';
-import * as path from 'path';
-
-// Load tsconfig.json
-const baseUrl = path.resolve('./');
-const { paths } = require('../tsconfig.json').compilerOptions;
-
-// Register aliases
-tsconfig.register({
-  baseUrl,
-  paths
-});
-
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';

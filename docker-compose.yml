@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_NAME
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $DB_USERNAME"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "$DB_PORT:$DB_PORT"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+    environment:
+      JWT_REFRESH_SECRET:
+      JWT_ACCESS_SECRET:
+      DB_HOST:
+      DB_PORT:
+      DB_NAME:
+      DB_USERNAME:
+      DB_PASSWORD:
+      DISCORD_CLIENT_ID:
+      DISCORD_CLIENT_SECRET:
+      DISCORD_CALLBACK_URL:
+      IMGUR_CLIENT_ID:
+      MAX_REQUEST_SIZE:
+      FRONTEND_URL:
+
+  frontend:
+    build:
+      context: ./
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      BACKEND_URL: http://localhost:3000
