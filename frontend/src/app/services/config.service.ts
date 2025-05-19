@@ -15,4 +15,8 @@ export class ConfigService {
   public get apiUrl(): string {
     return window.__APP_CONFIG__.API_URL
   }
+
+  public get socketUrl(): string {
+    return window.__APP_CONFIG__.SOCKET_URL
+  }
 }

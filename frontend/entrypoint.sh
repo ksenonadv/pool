@@ -6,6 +6,7 @@ CONFIG_PATH=/usr/share/nginx/html/assets/config.json
 cat <<EOF > $CONFIG_PATH
 {
   "API_URL": "${BACKEND_URL:-http://localhost:3000}"
+  "SOCKET_URL": "${SOCKET_URL:-ws://localhost:3000}"
 }
 EOF
 

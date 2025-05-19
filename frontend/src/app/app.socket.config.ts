@@ -14,7 +14,7 @@ export class GameSocket extends Socket {
     ) 
     {
         super({
-            url: configService.apiUrl + '/pool',
+            url: configService.socketUrl,
             options: {
                 autoConnect: false,
                 auth: {

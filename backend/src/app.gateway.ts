@@ -6,7 +6,6 @@ import { GameService } from 'src/services/game.service';
 import { ClientGameEventData, SocketEvent } from '@shared/socket.types';
 
 @WebSocketGateway({
-  namespace: 'pool',
   cors: {
     origin: '*',
   }

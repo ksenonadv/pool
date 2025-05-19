@@ -47,6 +47,7 @@ services:
       dockerfile: ./frontend/Dockerfile
     environment:
       BACKEND_URL:
+      SOCKET_URL:
     networks:
       - internal
 
