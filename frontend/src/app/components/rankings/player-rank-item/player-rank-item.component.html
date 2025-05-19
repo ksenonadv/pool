@@ -1,11 +1,11 @@
 
-<div class="grid grid-cols-12 gap-4 p-4 border-b border-blue-900/30 hover:bg-blue-900/30 transition-colors duration-200">
+<div class="grid grid-cols-12 gap-4 p-4 border-b border-blue-900/30 bg-white/5 hover:bg-blue-900/30 transition-colors duration-200">
 
   <div class="col-span-1 flex items-center justify-center">
     <div 
       class="flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm"
       [ngClass]="{
-        'bg-yellow-500/20 text-yellow-400': rank === 1,
+        'bg-yellow-500/60 text-yellow-400': rank === 1,
         'bg-gray-400/20 text-gray-300': rank === 2,
         'bg-amber-600/20 text-amber-400': rank === 3
       }"
@@ -29,11 +29,11 @@
     <span 
       class="font-bold"
       [ngClass]="{
-        'text-green-400': player.winRate >= 50,
-        'text-blue-400': player.winRate < 50 && player.winRate >= 45,
-        'text-red-400': player.winRate < 45
+        'text-green-400': player.winRate >= 0.50,
+        'text-blue-400': player.winRate < 0.50 && player.winRate >= 0.35,
+        'text-red-400': player.winRate < 0.35
       }"
-    >{{ player.winRate }}%</span>
+    >{{ player.winRate | percent }}</span>
     <span class="text-xs text-gray-400">Win Rate</span>
   </div>
   
@@ -42,7 +42,7 @@
     <div class="text-center">
       <span class="text-gray-200 font-medium">{{ player.totalMatches }}</span> <br>
       <span class="text-xs">
-        <span class = "text-green-600">{{ player.wins }} W</span> / <span class = "text-red-600">{{ player.losses }} L</span>
+        <span class = "text-green-600">{{ player.wins | number:'1.0-0' }} W</span> / <span class = "text-red-600">{{ player.losses | number:'1.0-0' }} L</span>
       </span>
     </div>
   </div>
@@ -52,11 +52,11 @@
     <span
       class="font-bold"
       [ngClass]="{
-        'text-green-400': player.efficiency >= 50,
-        'text-blue-400': player.efficiency < 50 && player.efficiency >= 45,
-        'text-red-400': player.efficiency < 45
+        'text-green-400': player.efficiency >= 0.50,
+        'text-blue-400': player.efficiency < 0.50 && player.efficiency >= 0.35,
+        'text-red-400': player.efficiency < 0.35
       }"
-    >{{ player.efficiency | number:'1.0-2' }}%</span>
+    >{{ player.efficiency | percent }}</span>
     <span class="text-xs text-gray-400">Efficiency</span>
   </div>
   

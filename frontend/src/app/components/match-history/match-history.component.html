@@ -20,10 +20,10 @@
           [first]="first" 
           [rows]="rows" 
           [totalRecords]="history.total" 
-          styleClass="paginator-custom mb-2"
+          styleClass="paginator mb-2"
         />
 
-        <div class="space-y-4">
+        <div class="space-y-4 bg-blue-900/10">
           <div class="overflow-hidden">
             @for (match of history.matches; track match.matchId) {
               <app-match 
