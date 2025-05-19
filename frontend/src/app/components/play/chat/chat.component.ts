@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatMessage } from '@shared/socket.types';
 import { ConnectionState } from 'src/app/interfaces/connection-state';
 import { SharedModule } from 'src/app/modules/shared.module';
-import { PoolService } from 'src/app/services/pool.service';
+import { PoolSocketService } from 'src/app/services/pool-socket.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ChatComponent implements OnChanges {
 
-  private readonly service: PoolService = inject(PoolService);
+  private readonly service: PoolSocketService = inject(PoolSocketService);
   private readonly userService: UserService = inject(UserService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   

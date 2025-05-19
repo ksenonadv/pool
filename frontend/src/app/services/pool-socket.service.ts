@@ -5,7 +5,7 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { ConnectionState } from "../interfaces/connection-state";
 
 @Injectable()
-export class PoolService implements OnDestroy {
+export class PoolSocketService implements OnDestroy {
 
   private readonly socket: Socket = inject(
     Socket
