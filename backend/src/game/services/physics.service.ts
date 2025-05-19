@@ -21,6 +21,9 @@ export class PhysicsService {
     
     this.worker = new Worker(join(__dirname, 'worker', 'index.js'));
     this.worker.on('message', this.messageHandler);
+    this.worker.on('error', (error) => {
+      console.error('Worker error:', error);
+    });
     
     this.worker.postMessage({
       type: MainProcessMessageType.INIT
