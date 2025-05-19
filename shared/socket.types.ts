@@ -38,6 +38,7 @@ export enum ServerEvent {
   GAME_OVER = 'game-over',
   BALL_POCKETED = 'ball-pocketed',
   CUE_BALL_POCKETED = 'cue-ball-pocketed',
+  PLAY_SOUND = 'play-sound',
 };
 
 export type ServerGameEventData = {

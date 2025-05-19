@@ -10,19 +10,22 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { GameOverDialogComponent } from './game-over-dialog/game-over-dialog.component';
 import { GameStateService } from 'src/app/services/game-state.service';
 import { PoolRendererService } from 'src/app/services/pool-renderer.service';
+import { PoolAudioService } from 'src/app/services/pool-audio.service';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss',
   imports: [SharedModule, PlayersComponent],
-  providers: [PoolRendererService, GameStateService]
+  providers: [PoolAudioService, PoolRendererService, GameStateService]
 })
 export class GameComponent implements OnInit, OnDestroy {
   
   private readonly userService = inject(UserService);
   private readonly gameState = inject(GameStateService);
   private readonly renderer = inject(PoolRendererService);
+  private readonly audioService = inject(PoolAudioService);
+
   private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
@@ -40,6 +43,8 @@ export class GameComponent implements OnInit, OnDestroy {
   public userId: string = undefined!;
   public stripesPocketed: Array<number> = [];
   public solidsPocketed: Array<number> = [];
+
+  public isMuted: boolean = false;
 
   ngOnInit(): void {
     
@@ -85,7 +90,15 @@ export class GameComponent implements OnInit, OnDestroy {
       });
     
     this.gameState.gameOver$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(this.handleGameOver.bind(this));
+      .subscribe(this.handleGameOver.bind(
+        this
+      ));
+
+    this.audioService.isMuted$.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(isMuted => {
+        this.isMuted = isMuted;
+        this.cdr.detectChanges();
+      });
   }
 
   ngOnDestroy(): void {
@@ -137,5 +150,9 @@ export class GameComponent implements OnInit, OnDestroy {
     );
     
     this.router.navigate(['/']);
+  }
+
+  public toggleMute(): void {
+    this.audioService.toggleMute();
   }
 }

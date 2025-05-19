@@ -20,8 +20,7 @@ export const enum WorkerProcessMessageType {
   MOVEMENT_END = 'MOVEMENT_END',
   BALL_POCKETED = 'BALL_POCKETED',
   CUE_BALL_POCKETED = 'CUE_BALL_POCKETED',
-  GAME_OVER = 'GAME_OVER',
-  TURN_CHANGE = 'TURN_CHANGE'
+  PLAY_SOUND = 'PLAY_SOUND',
 };
 
 export type WorkerProcessMessage = 
@@ -30,4 +29,5 @@ export type WorkerProcessMessage =
   | { type: WorkerProcessMessageType.MOVEMENT_START }
   | { type: WorkerProcessMessageType.MOVEMENT_END }
   | { type: WorkerProcessMessageType.BALL_POCKETED, payload: { ballNumber: number }  }
-  | { type: WorkerProcessMessageType.CUE_BALL_POCKETED };
+  | { type: WorkerProcessMessageType.CUE_BALL_POCKETED }
+  | { type: WorkerProcessMessageType.PLAY_SOUND, payload: { sound: string } };

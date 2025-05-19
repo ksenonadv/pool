@@ -67,6 +67,11 @@ export class GameStateManagerService {
         this.rulesService.handleCueBallPocketed();
         this.communicationService.notifyCueBallPocketed();
         break;
+
+      case WorkerProcessMessageType.PLAY_SOUND:
+        const { sound } = message.payload;
+        this.communicationService.playSound(sound);
+        break;
     }
   }
 

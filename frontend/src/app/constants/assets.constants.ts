@@ -18,3 +18,12 @@ export const GAME_IMAGES_ASSETS = {
   'ball_15': 'assets/images/game/ball_15.png',
   'cue': 'assets/images/game/cue.png'
 };
+
+export const GAME_AUDIO_ASSETS = {
+  'turn': 'assets/audio/turn.mp3',
+  'collision': 'assets/audio/collision.mp3',
+  'pocket': 'assets/audio/pocket.mp3',
+  'shoot': 'assets/audio/shoot.mp3',
+};
+
+export type SoundType = keyof typeof GAME_AUDIO_ASSETS;

@@ -143,6 +143,16 @@ export class CommunicationService {
     );
   }
 
+  public playSound(sound: string): void {
+    this.broadcast(
+      SocketEvent.SERVER_GAME_EVENT,
+      {
+        event: ServerEvent.PLAY_SOUND,
+        data: sound
+      }
+    );
+  }
+
   /**
    * Notifies about ball group assignment
    */

@@ -1,4 +1,4 @@
-import { Body, Composite, Engine, Events, Vector, World } from "matter-js";
+import { Body, Composite, Engine, Events, Pair, Vector, World } from "matter-js";
 import { parentPort } from 'worker_threads';
 import { createCueBall, createPoolTableEngineEntities } from "./bodies";
 import { FRAME_RATE } from "../../config/game.config";
@@ -55,7 +55,8 @@ class PoolGameWorker {
     );
 
     this.sendBallPositions(
-      WorkerProcessMessageType.SYNC_BALLS
+      WorkerProcessMessageType.SYNC_BALLS,
+      Array.from(this.balls)
     );
   }
 
@@ -86,6 +87,10 @@ class PoolGameWorker {
     // Notify movement started
     this.sendMessage(WorkerProcessMessageType.MOVEMENT_START);
     this.ballsMoving = true;
+
+    this.sendMessage(WorkerProcessMessageType.PLAY_SOUND, {
+      sound: 'shoot'
+    });
   }
 
   /**
@@ -119,7 +124,8 @@ class PoolGameWorker {
     
     if (movingBalls.length > 0) {
       this.sendBallPositions(
-        WorkerProcessMessageType.SYNC_MOVING_BALLS
+        WorkerProcessMessageType.SYNC_MOVING_BALLS,
+        movingBalls
       );
     } 
     
@@ -149,27 +155,59 @@ class PoolGameWorker {
   private handleCollision(event: Matter.IEventCollision<Matter.Engine>): void {
     
     for (const pair of event.pairs) {
-      
-      const hasPocket = pair.bodyA.label === 'pocket' || pair.bodyB.label === 'pocket';
-      const ballNumber = pair.bodyA.ballNumber ?? pair.bodyB.ballNumber;
+      this.handleBallsCollision(pair);
+      this.handlePocketCollision(pair);
+      this.handleWallCollision(pair);
+    }
+  }
 
-      if (ballNumber === undefined || !hasPocket) 
-        continue;
+  private handlePocketCollision(pair: Pair): void {
+    
+    const hasPocket = pair.bodyA.label === 'pocket' || pair.bodyB.label === 'pocket';
+    const ballNumber = pair.bodyA.ballNumber ?? pair.bodyB.ballNumber;
 
-      const ball = Array.from(this.balls).find(ball => ball.ballNumber === ballNumber);
-      
-      if (ballNumber === 0) {
-        // Cue ball pocketed
-        this.sendMessage(WorkerProcessMessageType.CUE_BALL_POCKETED);
-        this.removeBall(ball);
-        this.shouldPlaceBackCueBall = true;
-      } else {
-        // Regular ball pocketed
-        this.sendMessage(WorkerProcessMessageType.BALL_POCKETED, {
-          ballNumber
-        });
-        this.removeBall(ball);
-      }
+    if (ballNumber === undefined || !hasPocket) 
+      return;
+
+    const ball = pair.bodyA.ballNumber !== undefined ? pair.bodyA : pair.bodyB;
+    
+    this.sendMessage(WorkerProcessMessageType.PLAY_SOUND, {
+      sound: 'pocket'
+    });
+
+    if (ballNumber === 0) {
+      // Cue ball pocketed
+      this.sendMessage(WorkerProcessMessageType.CUE_BALL_POCKETED);
+      this.removeBall(ball);
+      this.shouldPlaceBackCueBall = true;
+    } else {
+      // Regular ball pocketed
+      this.sendMessage(WorkerProcessMessageType.BALL_POCKETED, {
+        ballNumber
+      });
+      this.removeBall(ball);
+    }
+  }
+
+  private handleBallsCollision(pair: Pair): void {
+
+    if (pair.bodyA.ballNumber === undefined || pair.bodyB.ballNumber === undefined)
+      return;
+    
+    this.sendMessage(WorkerProcessMessageType.PLAY_SOUND, {
+      sound: 'collision'
+    });
+  }
+
+  private handleWallCollision(pair: Pair): void {
+
+    if (
+      pair.bodyA.label === 'wall' && pair.bodyB.ballNumber !== undefined ||
+      pair.bodyB.label === 'wall' && pair.bodyA.ballNumber !== undefined
+    ) {
+      this.sendMessage(WorkerProcessMessageType.PLAY_SOUND, {
+        sound: 'collision'
+      });
     }
   }
 
@@ -177,10 +215,18 @@ class PoolGameWorker {
    * Place cue ball back on table
    */
   private placeBackCueBall(): void {
+    
     const ball = createCueBall();
+    
     Composite.add(this.engine.world, ball);
     this.balls.add(ball);
+
     this.shouldPlaceBackCueBall = false;
+
+    this.sendBallPositions(
+      WorkerProcessMessageType.SYNC_BALLS, // Sync all balls again
+      Array.from(this.balls)
+    );
   }
 
   /**
@@ -194,8 +240,8 @@ class PoolGameWorker {
   /**
    * Send ball positions to main process
    */
-  private sendBallPositions(type: WorkerProcessMessageType.SYNC_BALLS | WorkerProcessMessageType.SYNC_MOVING_BALLS): void {
-    this.sendMessage(type, Array.from(this.balls).map(ball => ({
+  private sendBallPositions(type: WorkerProcessMessageType.SYNC_BALLS | WorkerProcessMessageType.SYNC_MOVING_BALLS, balls: Array<Body>): void {
+    this.sendMessage(type, balls.map(ball => ({
       no: ball.ballNumber,
       position: ball.position,
       angle: ball.angle

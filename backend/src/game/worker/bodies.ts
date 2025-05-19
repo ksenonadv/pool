@@ -21,7 +21,8 @@ function createPoolTableWalls() {
       TABLE_WIDTH - TABLE_PADDING * 2,
       WALL_THICKNESS,
       {
-        isStatic: true
+        isStatic: true,
+        label: 'wall'
       }
     ),
     Bodies.rectangle(
@@ -30,7 +31,8 @@ function createPoolTableWalls() {
       TABLE_WIDTH - TABLE_PADDING * 2,
       WALL_THICKNESS,
       {
-        isStatic: true
+        isStatic: true,
+        label: 'wall'
       }
     ),
     Bodies.rectangle(
@@ -38,7 +40,8 @@ function createPoolTableWalls() {
       TABLE_HEIGHT / 2, WALL_THICKNESS,
       TABLE_HEIGHT - TABLE_PADDING * 2,
       {
-        isStatic: true
+        isStatic: true,
+        label: 'wall'
       }
     ),
     Bodies.rectangle(
@@ -46,7 +49,8 @@ function createPoolTableWalls() {
       TABLE_HEIGHT / 2, WALL_THICKNESS,
       TABLE_HEIGHT - TABLE_PADDING * 2,
       {
-        isStatic: true
+        isStatic: true,
+        label: 'wall'
       }
     )
   ]

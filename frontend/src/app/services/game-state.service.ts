@@ -5,6 +5,8 @@ import { PoolSocketService } from './pool-socket.service';
 import { BallGroup } from '@shared/game.types';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { PoolAudioService } from './pool-audio.service';
+import { SoundType } from '../constants/assets.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,8 @@ import { Subject } from 'rxjs';
 export class GameStateService {
 
   private readonly socketService = inject(PoolSocketService);
+  private readonly audioService = inject(PoolAudioService);
+
   private destroy$ = new Subject<void>();
 
   // Game state
@@ -66,7 +70,7 @@ export class GameStateService {
         break;
 
       case ServerEvent.SET_CAN_SHOOT:
-        this._canShoot.next(payload as boolean);
+        this.handleCanShoot(payload as boolean);
         break;
 
       case ServerEvent.SYNC_CUE:
@@ -92,6 +96,21 @@ export class GameStateService {
       case ServerEvent.GAME_OVER:
         this.handleGameOver(payload as GameOverEventData);
         break;
+
+      case ServerEvent.PLAY_SOUND:
+        this.playSound(payload as string);
+        break;
+    }
+  }
+
+  private handleCanShoot(canShoot: boolean): void {
+    
+    this._canShoot.next(canShoot);
+
+    if (canShoot) {
+      this.audioService.play(
+        'turn'
+      );
     }
   }
 
@@ -124,7 +143,11 @@ export class GameStateService {
     this._balls.next(updatedBalls);
   }
 
+  /**
+   * Handle ball pocketed event and play sound
+   */
   private handleBallPocketed(data: BallPocketedEventData): void {
+    
     const { ball, group } = data;
     
     // Update pocketed balls lists
@@ -139,13 +162,26 @@ export class GameStateService {
     this._balls.next(updatedBalls);
   }
 
+  /**
+   * Handle cue ball pocketed event
+   */
   private handleCueBallPocketed(): void {
     const updatedBalls = this._balls.value.filter(b => b.no !== 0);
     this._balls.next(updatedBalls);
   }
 
+  /**
+   * Handle game over event and play sound
+   */
   private handleGameOver(data: GameOverEventData): void {
     this._gameOver.next(data);
+  }
+
+  /**
+   * Play sound
+   */
+  private playSound(sound: string): void {
+    this.audioService.play(sound as SoundType);
   }
 
   // Public methods for component to use

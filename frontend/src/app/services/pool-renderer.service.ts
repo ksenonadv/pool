@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BallGroup, MIN_POWER } from '@shared/game.types';
+import { MIN_POWER } from '@shared/game.types';
 import { Ball, SyncCueEventData } from '@shared/socket.types';
-import { BALL_SIZE, CUE_SIZE, TABLE_PADDING } from '../components/play/table.constants';
-import { GAME_IMAGES_ASSETS } from '../components/play/game/assets';
+import { BALL_SIZE, CUE_SIZE, TABLE_PADDING } from '../constants/table.constants';
+import { GAME_IMAGES_ASSETS } from '../constants/assets.constants';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class PoolRendererService {
   private ctx: CanvasRenderingContext2D | null = null;
   private canvas: HTMLCanvasElement | null = null;
