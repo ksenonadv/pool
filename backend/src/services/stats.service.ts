@@ -127,7 +127,7 @@ export class StatsService {  constructor(
     if (isWinner)
       playerStats.wins ++;
     else
-      playerStats.losses --;
+      playerStats.losses ++;
 
     playerStats.winRate = playerStats.wins / playerStats.totalMatches;    
     playerStats.averageMatchDuration = playerStats.totalPlayTime / playerStats.totalMatches;
