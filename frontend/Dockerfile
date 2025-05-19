@@ -9,7 +9,7 @@ COPY ./shared ./shared
 WORKDIR /app/frontend
 
 RUN npm install
-RUN npm run build
+RUN npm run build --configuration=production
 
 # Stage 2: Serve the application with Nginx
 FROM nginx:alpine
@@ -22,8 +22,10 @@ COPY --from=build /app/frontend/dist/frontend/browser /usr/share/nginx/html
 # Copy custom nginx config
 COPY --from=build /app/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80
-EXPOSE 80
+COPY ./frontend/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
