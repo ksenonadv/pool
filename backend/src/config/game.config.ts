@@ -24,5 +24,5 @@ export const BALL_NUMBERS = [
 export const CUE_BALL_POSITION_X = TABLE_WIDTH * 0.75;
 export const CUE_BALL_POSITION_Y = TABLE_HEIGHT * 0.5;
 
-export const SOLID_BALLS = [1, 2, 3, 4, 5, 7];
+export const SOLID_BALLS = [1, 2, 3, 4, 5, 6, 7];
 export const STRIPED_BALLS = [9, 10, 11, 12, 13, 14, 15];
