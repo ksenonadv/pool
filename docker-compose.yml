@@ -37,6 +37,7 @@ services:
       IMGUR_CLIENT_ID:
       MAX_REQUEST_SIZE:
       FRONTEND_URL:
+      BACKEND_URL:
     networks:
       - internal
 
