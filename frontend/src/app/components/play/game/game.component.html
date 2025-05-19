@@ -50,8 +50,8 @@
 
 </div>
 
-<div class = "mt-4">
-  <label class="flex items-center cursor-pointer select-none">
+<div class="mt-6 flex justify-start pr-2">
+  <label class="flex items-center gap-3 cursor-pointer select-none bg-blue-950 p-2 rounded-md shadow-lg transition-colors duration-200">
     <input
       type="checkbox"
       [(ngModel)]="isMuted"
@@ -59,19 +59,15 @@
       (change)="toggleMute()"
     />
     <div
-      class="relative w-12 h-7 bg-gray-300 rounded-full transition-colors duration-200 peer-checked:bg-gray-400 peer-focus:ring-2 peer-focus:ring-blue-400"
+      class="relative w-12 h-7 bg-gray-400 rounded-full transition-colors duration-200 peer-checked:bg-blue-500 peer-focus:ring-2 peer-focus:ring-blue-400"
     >
       <div
         class="absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
         [ngClass]="{'translate-x-5': !isMuted, 'translate-x-0': isMuted}"
       ></div>
     </div>
-    <span class="ml-4 flex items-center text-gray-50 font-medium text-base">
-      <fa-icon
-        class="mr-2 text-lg"
-        [icon]="isMuted ? ['fas', 'volume-mute'] : ['fas', 'volume-up']"
-      ></fa-icon>
-      {{ isMuted ? 'Muted' : 'Sound On' }}
+    <span class="flex items-center text-gray-100 font-semibold text-base">
+      Audio {{ isMuted ? 'Off' : 'On' }}
     </span>
   </label>
 </div>

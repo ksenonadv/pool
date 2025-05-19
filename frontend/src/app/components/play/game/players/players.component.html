@@ -2,29 +2,26 @@
   <div class="bg-blue-950 p-4 flex items-center justify-between rounded-lg w-full max-w-4xl mx-auto mb-2">
     
     <div class="flex items-center space-x-2">
-      <img [src]="players[0].avatar" class="w-10 h-10 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn(players[0].userId)}">
+      <img [src]="players[0].avatar" class="w-12 h-12 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn(players[0].userId)}">
+      
       <div class="text-white text-base font-bold">
-        {{ players[0].name }} <br>
-        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-800 text-white border border-blue-400 align-middle">
-          {{ (players[0].group | titlecase) ?? 'N/A' }}
-        </span>
-      </div>
-      <div class="flex space-x-1 ml-2">
-        <ng-container [ngTemplateOutlet]="balls" [ngTemplateOutletContext]="{ data: { group: players[0].group } }"></ng-container>
+        <div>
+          {{ players[0].name }}
+        </div>
+        <div class="flex space-x-1">
+          <ng-container [ngTemplateOutlet]="balls" [ngTemplateOutletContext]="{ data: { group: players[0].group } }"></ng-container>
+        </div>
       </div>
     </div>
 
     <div class="flex items-center space-x-2">
-      <div class="flex space-x-1 ml-2">
-        <ng-container [ngTemplateOutlet]="balls" [ngTemplateOutletContext]="{ data: { group: players[1].group } }"></ng-container>
+       <div class="text-white text-right text-base font-bold">
+        {{ players[1].name }}
+        <div class="flex space-x-1">
+          <ng-container [ngTemplateOutlet]="balls" [ngTemplateOutletContext]="{ data: { group: players[1].group } }"></ng-container>
+        </div>
       </div>
-      <div class="text-white text-right text-base font-bold">
-        {{ players[1].name }} <br>
-        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-800 text-white border border-blue-400 align-middle">
-          {{ (players[1].group | titlecase) ?? 'N/A' }}
-        </span>
-      </div>
-      <img [src]="players[1].avatar" class="w-10 h-10 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn(players[1].userId)}">
+      <img [src]="players[1].avatar" class="w-12 h-12 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn(players[1].userId)}">
     </div>
 
   </div>
@@ -34,26 +31,26 @@
 
   @if (!data.group) {
     @for(a of [1, 2, 3, 4, 5, 6, 7]; track a) {
-      <div class="w-8 aspect-square rounded-full bg-white/10"></div>
+      <div class="w-6 h-6 aspect-square rounded-full bg-white/10"></div>
     }
   } 
   @else if (data.group === 'stripes') {
-    <div class="w-8 aspect-square rounded-full" *ngFor="let ball of stripes">
+    <div class="w-6 h-6 aspect-square rounded-full" *ngFor="let ball of stripes">
       <img [src]="'/assets/images/game/ball_' + ball + '.png'" class="w-full h-full object-cover rounded-full">
     </div>
     @for(a of [1, 2, 3, 4, 5, 6, 7]; track a) {
       @if (a <= 7 - stripes.length) {
-        <div class="w-8 aspect-square rounded-full bg-white/10"></div>
+        <div class="w-6 aspect-square rounded-full bg-white/10"></div>
       }
     }
   }
   @else if (data.group === 'solids') {
-    <div class="w-8 aspect-square rounded-full" *ngFor="let ball of solids">
+    <div class="w-6 h-6 aspect-square rounded-full" *ngFor="let ball of solids">
       <img [src]="'/assets/images/game/ball_' + ball + '.png'" class="w-full h-full object-cover rounded-full">
     </div>
     @for(a of [1, 2, 3, 4, 5, 6, 7]; track a) {
       @if (a <= 7 - solids.length) {
-        <div class="w-8 aspect-square rounded-full bg-white/10"></div>
+        <div class="w-6 aspect-square rounded-full bg-white/10"></div>
       }
     }
   }
