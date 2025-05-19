@@ -1,7 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { BallGroup } from '@shared/game.types';
+import { Injectable } from '@nestjs/common';
 import { GameOverReason } from '@shared/socket.types';
-import { SOLID_BALLS, STRIPED_BALLS } from 'src/config/game.config';
 import { StatsService } from 'src/services/stats.service';
 import { IGamePlayer } from '../interfaces/game-player.interface';
 
@@ -25,9 +23,7 @@ export class GameResultHandlerService {
     players: [IGamePlayer, IGamePlayer],
     winner: IGamePlayer,
     duration: number,
-    reason: GameOverReason,
-    solidsRemaining: Set<number>,
-    stripesRemaining: Set<number>
+    reason: GameOverReason
   ): Promise<any> {
     // Collect player-specific stats
     const playerStats = {};
@@ -38,9 +34,7 @@ export class GameResultHandlerService {
       const ballGroup = player.ballGroup;
       
       playerStats[player.userId] = {
-        ballsPocketed: ballGroup === BallGroup.SOLIDS 
-          ? SOLID_BALLS.length - solidsRemaining.size 
-          : STRIPED_BALLS.length - stripesRemaining.size,
+        ballsPocketed: player.ballsPocketed,
         shotsTaken: player.shotsTaken,
         fouls: player.fouls,
         ballGroup

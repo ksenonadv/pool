@@ -34,11 +34,13 @@ export class RulesService {
     this.communicationService.notifyBallPocketed(ballNumber, group);
     this.checkAndAssignGroups(group);
     
+    const isFault = !this.gameStateService.breakShot && this.gameStateService.activePlayer.ballGroup !== undefined && group !== this.gameStateService.activePlayer.ballGroup;
+
     // Check for fault
-    if (!this.gameStateService.breakShot && 
-        this.gameStateService.activePlayer.ballGroup !== undefined && 
-        group !== this.gameStateService.activePlayer.ballGroup) {
+    if (isFault) {
       this.gameStateService.shouldSwitchTurn = true;
+    } else {
+      this.gameStateService.activePlayer.ballsPocketed ++;
     }
 
     this.gameStateService.currentPlayerPocketedBalls = true;
@@ -141,9 +143,7 @@ export class RulesService {
       this.gameStateService.players,
       player,
       this.gameStateService.getDuration(),
-      reason,
-      this.gameStateService.solidsRemaining,
-      this.gameStateService.stripesRemaining
+      reason
     );
   }
 

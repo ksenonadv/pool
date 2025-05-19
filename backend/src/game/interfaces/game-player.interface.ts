@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { BallGroup } from '@shared/game.types';
+import { Socket } from 'socket.io';
 
 /**
  * Interface for a game player
@@ -8,8 +8,9 @@ export interface IGamePlayer {
   name: string;
   avatar: string;
   userId: string;
-  socket: any; // Using 'any' for Socket to avoid circular dependencies
+  socket: Socket;
   ballGroup?: BallGroup;
   shotsTaken?: number;
+  ballsPocketed?: number;
   fouls?: number;
 };
