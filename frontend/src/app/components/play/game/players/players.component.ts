@@ -1,5 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { BallGroup } from '@shared/game.types';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { SetPlayersEventData } from '@shared/socket.types';
 import { SharedModule } from 'src/app/modules/shared.module';
 
@@ -44,6 +43,5 @@ export class PlayersComponent implements OnChanges {
     }
 
   }
-
 }
 

@@ -1,20 +1,20 @@
 @if (players && players.length > 0) {
   <div class="bg-blue-950 p-4 flex items-center justify-between rounded-lg w-full max-w-4xl mx-auto mb-2">
     
-    <div class="flex items-center space-x-2">
+    <div class="flex items-center space-x-2 relative">
       <img [src]="players[0].avatar" class="w-12 h-12 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn[0]}">
-      
       <div class="text-white text-base font-bold">
-        <div>
-          {{ players[0].name }}
-        </div>
+        {{ players[0].name }}
         <div class="flex space-x-1">
           <ng-container [ngTemplateOutlet]="balls" [ngTemplateOutletContext]="{ data: { group: players[0].group } }"></ng-container>
         </div>
       </div>
+      <div class="absolute -top-10 left-0 bg-blue-900 rounded-full px-4 py-2 text-gray-50 shadow-lg text-sm animate-bounce drop-shadow-lg after:content-[''] after:absolute after:top-full after:left-6 after:border-8 after:border-t-blue-900 after:border-x-transparent after:border-b-0 after:w-0 after:h-0" *ngIf="isPlayerTurn[0]">
+        {{ players[0].name }}'s Turn
+      </div>
     </div>
 
-    <div class="flex items-center space-x-2">
+    <div class="flex items-center space-x-2 relative">
        <div class="text-white text-right text-base font-bold">
         {{ players[1].name }}
         <div class="flex space-x-1">
@@ -22,6 +22,9 @@
         </div>
       </div>
       <img [src]="players[1].avatar" class="w-12 h-12 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn[1]}">
+      <div class="absolute -top-10 right-0 bg-blue-900 rounded-full px-4 py-2 text-gray-50 shadow-lg text-sm animate-bounce drop-shadow-lg after:content-[''] after:absolute after:top-full after:right-6 after:border-8 after:border-t-blue-900 after:border-x-transparent after:border-b-0 after:w-0 after:h-0" *ngIf="isPlayerTurn[1]">
+        {{ players[1].name }}'s Turn
+      </div>
     </div>
 
   </div>
