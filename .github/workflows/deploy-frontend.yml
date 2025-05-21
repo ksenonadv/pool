@@ -39,7 +39,7 @@ jobs:
         run: npm run build -- --configuration=production
 
       - name: Sync to S3
-        uses: Noelware/s3-action@2
+        uses: Noelware/s3-action@master
         with:
           directories: |
               ./frontend/dist/frontend/browser
