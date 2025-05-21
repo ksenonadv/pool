@@ -24,19 +24,23 @@
 
   <button
     class = "w-full py-2 bg-blue-700 disabled:bg-blue-900 hover:bg-blue-600 rounded font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed"
-    [disabled]="cue.isEquipped || !cue.isUnlocked && playerPoints < cue.price"
+    [disabled]="cue.isEquipped || !cue.isUnlocked"
     [ngClass]="{
-      '!bg-yellow-600 !hover:bg-yellow-500': cue.isEquipped
+      '!bg-green-600': cue.isEquipped,
+      '!bg-red-800': !cue.isUnlocked
     }"
     (click)="equip()"
   >
     @if (cue.isEquipped) {
-      Currently Equipped
+      <fa-icon [icon]="['fas', 'check-double']"></fa-icon>
+      Equipped
     } @else {
       @if (!cue.isUnlocked) {
-        Unlock
+        <fa-icon [icon]="['fas', 'lock']"></fa-icon>
+        Locked
       } 
       @else {
+        <fa-icon [icon]="['fas', 'check']"></fa-icon>
         Equip
       }
     }

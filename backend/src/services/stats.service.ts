@@ -11,7 +11,9 @@ import { MatchHistoryResult, PlayerRankingsResult, UserStats } from '@shared/sta
 import { POINTS_PER_LOSS, POINTS_PER_WIN } from 'src/config/cues.config';
 
 @Injectable()
-export class StatsService {  constructor(
+export class StatsService {  
+  
+  constructor(
     @InjectRepository(Match)
     private matchRepository: Repository<Match>,
     @InjectRepository(MatchPlayer)
