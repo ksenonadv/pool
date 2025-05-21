@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { BallGroup } from '@shared/game.types';
 import { SetPlayersEventData } from '@shared/socket.types';
 import { SharedModule } from 'src/app/modules/shared.module';
@@ -9,7 +9,7 @@ import { SharedModule } from 'src/app/modules/shared.module';
   templateUrl: './players.component.html',
   styleUrl: './players.component.scss'
 })
-export class PlayersComponent {
+export class PlayersComponent implements OnChanges {
 
   @Input()
   public players: SetPlayersEventData | undefined = undefined;
@@ -26,12 +26,24 @@ export class PlayersComponent {
   @Input()
   public stripes: Array<number> = [];
 
-  public isPlayerTurn(userId: string): boolean {
+  public isPlayerTurn: Array<boolean> = [false, false];
 
-    if (this.userId == userId)
-      return this.canShoot;
+  public ngOnChanges(changes: SimpleChanges): void {
+    
+    if (changes['canShoot'] && this.players) {
 
-    return !this.canShoot;
+      const myIndex = this.players.findIndex(
+        p => p.userId === this.userId
+      );
+
+      if (myIndex === -1)
+        return;
+
+      this.isPlayerTurn[myIndex] = changes['canShoot'].currentValue;
+      this.isPlayerTurn[1 - myIndex] = !changes['canShoot'].currentValue;
+    }
+
   }
+
 }
 

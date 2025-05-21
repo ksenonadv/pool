@@ -2,7 +2,7 @@
   <div class="bg-blue-950 p-4 flex items-center justify-between rounded-lg w-full max-w-4xl mx-auto mb-2">
     
     <div class="flex items-center space-x-2">
-      <img [src]="players[0].avatar" class="w-12 h-12 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn(players[0].userId)}">
+      <img [src]="players[0].avatar" class="w-12 h-12 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn[0]}">
       
       <div class="text-white text-base font-bold">
         <div>
@@ -21,7 +21,7 @@
           <ng-container [ngTemplateOutlet]="balls" [ngTemplateOutletContext]="{ data: { group: players[1].group } }"></ng-container>
         </div>
       </div>
-      <img [src]="players[1].avatar" class="w-12 h-12 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn(players[1].userId)}">
+      <img [src]="players[1].avatar" class="w-12 h-12 bg-blue-500 rounded-md flex items-center justify-center border-2" [ngClass]="{'border-green-400': isPlayerTurn[1]}">
     </div>
 
   </div>
