@@ -17,7 +17,7 @@ export async function bootstrap() {
   app.use(bodyParser.urlencoded({ limit: maxPostSize, extended: true }));
   app.useGlobalPipes(new ValidationPipe({ stopAtFirstError: true }));
 
-  await app.listen(3000);
+  await app.listen(3000, '0.0.0.0');
 }
 
 // Execute bootstrap if this file is run directly
