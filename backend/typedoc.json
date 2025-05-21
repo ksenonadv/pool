@@ -1,0 +1,12 @@
+{
+  "entryPoints": ["./src"],
+  "entryPointStrategy": "expand",
+  "out": "../docs/output/backend",
+  "name": "Cue Frenzy - Backend Documentation",
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeExternals": true,
+  "externalPattern": ["**/node_modules/**"],
+  "exclude": ["**/node_modules/**", "**/dist/**", "**/test/**"],
+  "readme": "README.md",
+}

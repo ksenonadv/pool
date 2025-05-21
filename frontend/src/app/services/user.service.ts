@@ -8,6 +8,12 @@ import { BehaviorSubject } from "rxjs";
 import { Me } from "../interfaces/me";
 import { ConfigService } from "./config.service";
 
+/**
+ * Service responsible for user profile management.
+ * 
+ * Handles fetching user data, updating profile information (avatar, username, password),
+ * and keeping the user state in sync across the application.
+ */
 @Injectable({
     providedIn: 'root'
 })
@@ -21,6 +27,12 @@ export class UserService {
     private apiUrl = this.config.apiUrl + '/user';
     private user: BehaviorSubject<Me | undefined> = new BehaviorSubject<Me | undefined>(undefined);
 
+    /**
+     * Initializes the service and sets up authentication subscription.
+     * 
+     * When the auth state changes, this will automatically fetch
+     * the user profile or clear it depending on login status.
+     */
     constructor() {
         this.auth.isLoggedIn().pipe(
             takeUntilDestroyed(
@@ -42,10 +54,22 @@ export class UserService {
         });
     }
 
+    /**
+     * Observable of the current user profile data.
+     * 
+     * @returns An observable stream of the user profile, or undefined if not logged in
+     */
     public get user$() {
         return this.user.asObservable();
     }
 
+    /**
+     * Updates the user's avatar.
+     * 
+     * @param avatar - Base64 encoded string of the image
+     * @returns Promise that resolves when the avatar is updated successfully
+     * @throws Error message from the server if update fails
+     */
     public updateAvatar(avatar: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
         
@@ -66,6 +90,13 @@ export class UserService {
         });
     }
 
+    /**
+     * Updates the user's username.
+     * 
+     * @param username - The new username to set
+     * @returns Promise that resolves when the username is updated successfully
+     * @throws Error message from the server if update fails
+     */
     public updateUsername(username: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
         
@@ -86,6 +117,14 @@ export class UserService {
         });
     }
 
+    /**
+     * Updates the user's password.
+     * 
+     * @param currentPassword - The current password for verification
+     * @param password - The new password to set
+     * @returns Promise that resolves when the password is updated successfully
+     * @throws Error message from the server if update fails
+     */
     public updatePassword(currentPassword: string, password: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
         

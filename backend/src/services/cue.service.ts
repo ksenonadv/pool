@@ -7,9 +7,21 @@ import { User } from 'src/entities/user.entity';
 import { CueShopResponse } from '@shared/cue.types';
 import { DEFAULT_CUES, POINTS_PER_LOSS, POINTS_PER_WIN } from 'src/config/cues.config';
 
+/**
+ * Service responsible for managing cue-related operations in the pool game.
+ * Handles cue shop data, cue unlocking, and cue equipping functionality.
+ */
 @Injectable()
 export class CueService {
   
+  /**
+   * Creates an instance of the CueService.
+   * Initializes default cues in the database if they don't exist.
+   * 
+   * @param cueRepository - Repository for cue entities
+   * @param userRepository - Repository for user entities
+   * @param playerStatsRepository - Repository for player statistics entities
+   */
   constructor(
     @InjectRepository(Cue)
     private cueRepository: Repository<Cue>,
@@ -38,8 +50,12 @@ export class CueService {
 
 
   /**
-   * Get the cue shop data for a user.
-   * @param userId 
+   * Retrieves the cue shop data for a specific user.
+   * Includes information about cues, their prices, unlock status,
+   * equipped status, player points, and point rewards.
+   * 
+   * @param userId - ID of the user requesting the shop data
+   * @returns CueShopResponse containing cues and player point information
    */
   async getCueShop(userId: string): Promise<CueShopResponse> {
     
@@ -66,7 +82,12 @@ export class CueService {
   }
 
   /**
-   * Equip a cue.
+   * Equips a specific cue for a user if they have enough points to unlock it.
+   * 
+   * @param userId - ID of the user equipping the cue
+   * @param cueId - ID of the cue to equip
+   * @throws NotFoundException if the cue or player stats are not found
+   * @throws BadRequestException if the user doesn't have enough points or if the cue is already equipped
    */
   async equipCue(userId: string, cueId: string): Promise<void> {
     

@@ -8,6 +8,12 @@ import { Subject } from 'rxjs';
 import { PoolAudioService } from './pool-audio.service';
 import { SoundType } from '../constants/assets.constants';
 
+/**
+ * Service responsible for managing the game state in the frontend.
+ * Handles communication with the server via socket events,
+ * maintains the current state of the game (balls, players, turn),
+ * and coordinates game actions like shooting and cue positioning.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -38,10 +44,16 @@ export class GameStateService {
   public readonly solidsPocketed$ = this._solidsPocketed.asObservable();
   public readonly gameOver$ = this._gameOver.asObservable();
 
+  /**
+   * Initializes the game state service and sets up socket event listeners.
+   */
   constructor() {
     this.initEventListeners();
   }
 
+  /**
+   * Sets up listeners for socket events from the server.
+   */
   private initEventListeners(): void {
     this.socketService.fromEvent<ServerGameEventData, SocketEvent.SERVER_GAME_EVENT>(SocketEvent.SERVER_GAME_EVENT)
       .pipe(takeUntil(this.destroy$))
@@ -50,7 +62,12 @@ export class GameStateService {
         this.handleServerEvent(event, payload);
       });
   }
-
+  /**
+   * Handles different types of server events by dispatching to the appropriate handler method.
+   * 
+   * @param event - The type of server event received
+   * @param payload - The data associated with the event
+   */
   private handleServerEvent(event: ServerEvent, payload: any): void {
     switch (event) {
       case ServerEvent.SET_PLAYERS:
@@ -102,7 +119,11 @@ export class GameStateService {
         break;
     }
   }
-
+  /**
+   * Updates the can shoot state and plays a sound when it's the player's turn.
+   * 
+   * @param canShoot - Whether the current player can shoot
+   */
   private handleCanShoot(canShoot: boolean): void {
     
     this._canShoot.next(canShoot);
@@ -114,6 +135,11 @@ export class GameStateService {
     }
   }
 
+  /**
+   * Updates ball groups for players based on server data.
+   * 
+   * @param payload - Mapping of user IDs to ball groups (stripes or solids)
+   */
   private handleSetBallGroup(payload: SetBallGroupEventData): void {
     const currentPlayers = this._players.value;
     
@@ -127,6 +153,11 @@ export class GameStateService {
     this._players.next([...currentPlayers]);
   }
 
+  /**
+   * Updates positions of moving balls in real-time.
+   * 
+   * @param movingBalls - Array of balls with updated positions and angles
+   */
   private handleMovingBallsSync(movingBalls: Array<Ball>): void {
     const currentBalls = this._balls.value;
     if (!currentBalls.length) return;
@@ -142,9 +173,10 @@ export class GameStateService {
 
     this._balls.next(updatedBalls);
   }
-
   /**
-   * Handle ball pocketed event and play sound
+   * Handle ball pocketed event and update the appropriate pocketed balls collection.
+   * 
+   * @param data - Information about the pocketed ball
    */
   private handleBallPocketed(data: BallPocketedEventData): void {
     
@@ -163,7 +195,7 @@ export class GameStateService {
   }
 
   /**
-   * Handle cue ball pocketed event
+   * Handle cue ball pocketed event by removing it from play.
    */
   private handleCueBallPocketed(): void {
     const updatedBalls = this._balls.value.filter(b => b.no !== 0);
@@ -171,20 +203,29 @@ export class GameStateService {
   }
 
   /**
-   * Handle game over event and play sound
+   * Handle game over event and notify subscribers.
+   * 
+   * @param data - Game over data including winner information
    */
   private handleGameOver(data: GameOverEventData): void {
     this._gameOver.next(data);
   }
 
   /**
-   * Play sound
+   * Play a sound effect using the audio service.
+   * 
+   * @param sound - The name of the sound to play
    */
   private playSound(sound: string): void {
     this.audioService.play(sound as SoundType);
   }
 
   // Public methods for component to use
+  /**
+   * Sends a shoot event to the server when the player takes a shot.
+   * 
+   * @param cueData - Data about the cue position and power
+   */
   public shoot(cueData: SyncCueEventData): void {
     
     if (!this._canShoot.value || this._ballsMoving.value || !cueData?.power)
@@ -200,6 +241,11 @@ export class GameStateService {
     );
   }
 
+  /**
+   * Syncs the cue position and angle with the server based on the player's mouse position.
+   * 
+   * @param cueData - Updated cue data to sync
+   */
   public syncCue(cueData: SyncCueEventData): void {
     
     this._cueData.next(
@@ -212,6 +258,9 @@ export class GameStateService {
     );
   }
 
+  /**
+   * Cleans up resources and resets state when the game component is destroyed.
+   */
   public cleanup(): void {
     
     this.destroy$.next();
@@ -228,18 +277,30 @@ export class GameStateService {
   }
 
   // Current value getters
+  /**
+   * Gets the current array of balls on the table.
+   */
   public get balls(): Ball[] {
     return this._balls.value;
   }
 
+  /**
+   * Gets whether the current player can shoot.
+   */
   public get canShoot(): boolean {
     return this._canShoot.value;
   }
   
+  /**
+   * Gets whether any balls are currently in motion.
+   */
   public get ballsMoving(): boolean {
     return this._ballsMoving.value;
   }
   
+  /**
+   * Gets the current cue data including position and power.
+   */
   public get cueData(): SyncCueEventData | undefined {
     return this._cueData.value;
   }

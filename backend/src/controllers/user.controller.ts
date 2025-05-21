@@ -5,6 +5,12 @@ import { UsersService } from 'src/services/users.service';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { ChangeAvatarDto, ChangeNameDto, ChangePasswordDto } from 'src/dto/user.dto';
 
+/**
+ * Controller for handling user-related HTTP requests.
+ * 
+ * Provides endpoints for retrieving and updating user profile data.
+ * All endpoints are protected with AccessTokenGuard to ensure authentication.
+ */
 @Controller('user')
 export class UserController {
 
@@ -12,6 +18,14 @@ export class UserController {
         private readonly userService: UsersService
     ) { /* */ }
 
+    /**
+     * Retrieves the current authenticated user's information.
+     * 
+     * Returns a simplified user object with essential profile information.
+     * 
+     * @param req - The request object containing user authentication data
+     * @returns User profile data (id, username, avatar, discordId)
+     */
     @UseGuards(AccessTokenGuard)
     @Get('me')
     async getMe(@Req() req: Request) {
@@ -30,6 +44,18 @@ export class UserController {
         };
     }
 
+    /**
+     * Updates the user's avatar image.
+     * 
+     * Uploads the provided base64 image to Imgur and updates the user's
+     * profile with the resulting image URL.
+     * 
+     * @param body - DTO containing the avatar image as base64
+     * @param req - The request object containing user authentication data
+     * @returns Object containing the new avatar URL
+     * @throws BadRequestException if avatar is missing or invalid
+     * @throws InternalServerErrorException if upload to Imgur fails
+     */
     @Patch('avatar')
     @UseGuards(AccessTokenGuard)
     async changeAvatar(@Body() body: ChangeAvatarDto, @Req() req: Request) {
@@ -73,6 +99,16 @@ export class UserController {
         }
     }
 
+    /**
+     * Updates the user's username.
+     * 
+     * Validates that the username is available before updating.
+     * 
+     * @param body - DTO containing the new username
+     * @param req - The request object containing user authentication data
+     * @returns Object containing the new username
+     * @throws BadRequestException if username is missing, already in use, or user not found
+     */
     @Patch('username')
     @UseGuards(AccessTokenGuard)
     async changeUsername(@Body() body: ChangeNameDto, @Req() req: Request) {
@@ -112,6 +148,15 @@ export class UserController {
         };
     }
 
+    /**
+     * Updates the user's password.
+     * 
+     * Verifies the current password before changing to the new password.
+     * 
+     * @param body - DTO containing current and new password
+     * @param req - The request object containing user authentication data
+     * @throws BadRequestException if passwords are missing or validation fails
+     */
     @Patch('password')
     @UseGuards(AccessTokenGuard)
     async changePassword(@Body() body: ChangePasswordDto, @Req() req: Request) {

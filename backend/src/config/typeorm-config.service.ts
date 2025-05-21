@@ -7,10 +7,25 @@ import { MatchPlayer } from '../entities/match-player.entity';
 import { PlayerStats } from '../entities/player-stats.entity';
 import { Cue } from '../entities/cue.entity';
 
+/**
+ * Service that configures TypeORM for the application.
+ * 
+ * Provides database connection options based on environment variables.
+ * Implements TypeOrmOptionsFactory to integrate with NestJS's TypeORM module.
+ */
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
 
+  /**
+   * Creates TypeORM configuration options.
+   * 
+   * Reads database connection parameters from environment variables with defaults.
+   * Registers all entity classes used in the application.
+   * Enables schema synchronization for development.
+   * 
+   * @returns TypeORM configuration options
+   */
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'postgres',

@@ -5,6 +5,15 @@ import { SharedModule } from '../../modules/shared.module';
 import { UserService } from '../../services/user.service';
 import { StatsComponent } from "./stats/stats.component";
 
+/**
+ * Component for displaying and managing user profile information.
+ * 
+ * Provides functionality to:
+ * - Update username
+ * - Change password
+ * - Upload and update avatar image
+ * - View player statistics (via StatsComponent)
+ */
 @Component({
     selector: 'app-profile',
     templateUrl: './profile.component.html',
@@ -18,20 +27,40 @@ export class ProfileComponent {
     private readonly userService: UserService = inject(UserService);
     private readonly formBuilder: FormBuilder = inject(FormBuilder);
 
+    /**
+     * Form group for changing username with validation
+     */
     public usernameChangeForm: FormGroup = this.formBuilder.group({
         username: ['', [Validators.required, Validators.minLength(3)]],
     });
 
+    /**
+     * Form group for changing password with validation including password matching
+     */
     public passwordChangeForm: FormGroup = this.formBuilder.group({
         currentPassword: ['', [Validators.required]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
     }, { validators: this.checkPasswords.bind(this) });
 
+    /**
+     * URL of the user's avatar image
+     */
     public avatar: string = '';
+    
+    /**
+     * Flag to hide password change form for OAuth users
+     */
     public hideChangePassword: boolean = false;
+    
+    /**
+     * Flag to track loading states during API calls
+     */
     public loading: boolean = false;
     
+    /**
+     * Initialize component and subscribe to user data
+     */
     constructor() {
         this.userService.user$.subscribe((user) => {
             if (user) {
@@ -45,6 +74,9 @@ export class ProfileComponent {
         });
     }
 
+    /**
+     * Change the user's username if form is valid
+     */
     public changeUsername(): void {
 
         if (this.usernameChangeForm.invalid || !this.usernameChangeForm.touched)
@@ -74,6 +106,9 @@ export class ProfileComponent {
         });
     }
 
+    /**
+     * Change the user's password if form is valid
+     */
     public changePassword(): void {
 
         if (this.passwordChangeForm.invalid || !this.passwordChangeForm.touched)
@@ -105,6 +140,12 @@ export class ProfileComponent {
         });
     }
 
+    /**
+     * Validate that password and confirm password fields match
+     * 
+     * @param group - FormGroup containing password fields
+     * @returns Validation error object or null if valid
+     */
     private checkPasswords(group: FormGroup) {
 
         const password = group.get('password')?.value;
@@ -118,6 +159,11 @@ export class ProfileComponent {
         return null;
     }
 
+    /**
+     * Handle avatar image upload and update
+     * 
+     * @param event - File input change event containing the selected image
+     */
     public changeAvatar(event: Event): void {
         
         const target = event.target as HTMLInputElement;

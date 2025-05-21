@@ -12,6 +12,11 @@ import { GameStateService } from 'src/app/services/game-state.service';
 import { PoolRendererService } from 'src/app/services/pool-renderer.service';
 import { PoolAudioService } from 'src/app/services/pool-audio.service';
 
+/**
+ * Main component for the pool game interface.
+ * Handles game rendering, player interaction, and game state management.
+ * Coordinates communication between game state, renderer, and audio services.
+ */
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -31,23 +36,39 @@ export class GameComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly dialogService = inject(DialogService);
 
+  /** Current connection state of the game */
   @Input()
   public state: ConnectionState = ConnectionState.Disconnected;
   public ConnectionState = ConnectionState;
 
+  /** Reference to the canvas element for rendering the pool table */
   @ViewChild('canvasRef', { static: true }) 
   public canvas: ElementRef<HTMLCanvasElement> = undefined!;
 
+  /** Whether the current player can shoot */
   public canShoot: boolean = false;
+  
+  /** Array of players in the current game */
   public players: SetPlayersEventData = [];
+  
+  /** Current user's ID */
   public userId: string = undefined!;
+  
+  /** Array of striped balls that have been pocketed */
   public stripesPocketed: Array<number> = [];
+  
+  /** Array of solid balls that have been pocketed */
   public solidsPocketed: Array<number> = [];
 
+  /** Whether game audio is muted */
   public isMuted: boolean = false;
 
+  /** Reference to the active player */
   private activePlayer: SetPlayersEventData[0] = undefined!;
 
+  /**
+   * Initializes the game component, sets up the renderer, and subscribes to game state updates.
+   */
   ngOnInit(): void {
     
     // Initialize renderer
@@ -104,11 +125,18 @@ export class GameComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Cleans up resources when the component is destroyed.
+   */
   ngOnDestroy(): void {
     this.renderer.cleanup();
     this.gameState.cleanup();
   }
 
+  /**
+   * Draws the current game state to the canvas.
+   * Called on each animation frame by the renderer service.
+   */
   private draw(): void {
     if (this.state !== ConnectionState.InGame) {
       this.renderer.render([], undefined, false);
@@ -125,12 +153,20 @@ export class GameComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Handles click events on the canvas to shoot the cue ball.
+   */
   public onClick(): void {
     if (this.gameState.cueData) {
       this.gameState.shoot(this.gameState.cueData);
     }
   }
 
+  /**
+   * Handles mouse movement to update the cue position.
+   * 
+   * @param event - The mouse movement event
+   */
   public onMouseMove(event: MouseEvent): void {
     if (!this.gameState.canShoot || this.gameState.ballsMoving) {
       return;
@@ -146,6 +182,11 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Handles the game over event by showing the game over dialog and redirecting to the home page.
+   * 
+   * @param data - Game over event data including winner information
+   */
   private handleGameOver(data: GameOverEventData): void {
     this.dialogService.open(
       GameOverDialogComponent,
@@ -158,6 +199,9 @@ export class GameComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
+  /**
+   * Toggles audio mute state.
+   */
   public toggleMute(): void {
     this.audioService.toggleMute();
   }

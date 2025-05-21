@@ -1,0 +1,14 @@
+{
+  "entryPoints": ["./src"],
+  "entryPointStrategy": "expand",
+  "out": "../docs/output/shared",
+  "name": "Cue Frenzy - Shared Types Documentation",
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeExternals": true,
+  "externalPattern": ["**/node_modules/**"],
+  "exclude": ["**/node_modules/**", "**/dist/**", "**/test/**"],
+  "readme": "README.md",
+  "plugin": ["typedoc-plugin-merge-modules"],
+  "mergeModulesMergeMode": "project"
+}

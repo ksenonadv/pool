@@ -10,6 +10,14 @@ import { GameOverReason } from '@shared/socket.types';
 import { MatchHistoryResult, PlayerRankingsResult, PlayerRankingsSortBy, PlayerRankingsSortOrder, UserStats } from '@shared/stats.types';
 import { POINTS_PER_LOSS, POINTS_PER_WIN } from 'src/config/cues.config';
 
+/**
+ * Service responsible for managing player statistics and match history.
+ * 
+ * Provides methods for:
+ * - Storing completed matches
+ * - Calculating player statistics
+ * - Retrieving player rankings and match history
+ */
 @Injectable()
 export class StatsService {  
   
@@ -25,7 +33,17 @@ export class StatsService {
   ) { }
 
   /**
-   * Save a completed match and update player statistics
+   * Save a completed match and update player statistics.
+   * 
+   * Creates a match record and associated player statistics, then updates
+   * the players' overall statistics.
+   * 
+   * @param players - Array of players who participated in the match
+   * @param winner - The player who won the match
+   * @param durationSeconds - The total duration of the match in seconds
+   * @param gameOverReason - The reason the game ended (e.g., EIGHT_BALL_POTTED)
+   * @param playerStats - Record of statistics for each player in the match
+   * @returns Promise that resolves when the match is saved
    */
   async saveMatch(
     players: IGamePlayer[], 
@@ -86,7 +104,20 @@ export class StatsService {
   }
 
   /**
-   * Update a player's statistics
+   * Update a player's statistics based on match results.
+   * 
+   * Updates cumulative statistics for a player including:
+   * - Total matches played
+   * - Wins/losses and win rate
+   * - Balls pocketed and shots taken
+   * - Fouls committed
+   * - Play time and average match duration
+   * - Player points (used for progressions and rewards)
+   * 
+   * @param userId - The user ID of the player to update
+   * @param matchStats - Statistics from the current match
+   * @param isWinner - Whether this player won the match
+   * @param durationSeconds - Duration of the match in seconds
    */
   private async updatePlayerStats(
     userId: string, 
@@ -98,7 +129,8 @@ export class StatsService {
     isWinner: boolean,
     durationSeconds: number
   ): Promise<void> {
-      // Get existing stats or create new ones
+    
+    // Get existing stats or create new ones
     let playerStats = await this.playerStatsRepository.findOne({ where: { 
         userId 
       } 
@@ -142,7 +174,15 @@ export class StatsService {
   }
 
   /**
-   * Get player rankings
+   * Get player rankings with pagination and sorting.
+   * 
+   * Retrieves a leaderboard of players sorted by the specified criteria.
+   * 
+   * @param page - The page number to retrieve (1-based)
+   * @param limit - The number of players to retrieve per page
+   * @param sortBy - The field to sort by (winRate, totalMatches, efficiency, etc.)
+   * @param sortOrder - The sort direction (ASC or DESC)
+   * @returns Paginated player rankings with statistics
    */
   async getPlayerRankings(
     page: number = 1, 
@@ -187,7 +227,14 @@ export class StatsService {
   }
 
   /**
-   * Create sort order for player rankings
+   * Create sort order configuration for player rankings query.
+   * 
+   * Maps the sortBy parameter to the appropriate sort criteria for TypeORM.
+   * Handles special cases like efficiency which requires multiple fields.
+   * 
+   * @param sortBy - The field to sort by
+   * @param sortOrder - The sort direction (ASC or DESC)
+   * @returns TypeORM-compatible sort order object
    */
   private createSortOrder(
     sortBy: PlayerRankingsSortBy, 
@@ -213,6 +260,11 @@ export class StatsService {
   
   /**
    * Get match history for a specific player
+   * 
+   * @param userId - The user ID of the player to retrieve match history for
+   * @param page - The page number to retrieve (1-based)
+   * @param limit - The number of matches to retrieve per page
+   * @returns MatchHistoryResult object containing the player's match history
    */
   async getPlayerMatchHistory(
     userId: string, 
@@ -263,6 +315,9 @@ export class StatsService {
 
   /**
    * Get detailed statistics for a single player
+   * 
+   * @param userId - The user ID of the player to retrieve statistics for
+   * @returns UserStats object containing the player's statistics
    */
   async getPlayerStatistics(userId: string): Promise<UserStats> {
     
