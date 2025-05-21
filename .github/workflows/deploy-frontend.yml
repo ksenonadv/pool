@@ -17,6 +17,14 @@ jobs:
         with:
           node-version: 18
 
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
@@ -50,9 +58,8 @@ jobs:
 
       - name: Invalidate CloudFront
         uses: docker://rewindio/github-action-cloudfront-invalidate
-        with:
-          distribution: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
-          paths: '/*'
         env:
+          DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+          PATH_TO_INVALIDATE: '/*'
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
