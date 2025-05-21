@@ -64,7 +64,8 @@ export class RulesService {
     
     if (this.gameStateService.breakShot) {
       return this.endGame(
-        GameOverReason.FAULT
+        GameOverReason.FAULT,
+        activePlayer
       );
     }
 
@@ -73,11 +74,13 @@ export class RulesService {
 
     if (hasBallsLeft) {
       this.endGame(
-        GameOverReason.FAULT
+        GameOverReason.FAULT,
+        activePlayer
       );
     } else {
       this.endGame(
         GameOverReason.WIN, 
+        activePlayer
       );
     }
   }
@@ -123,15 +126,12 @@ export class RulesService {
   /**
    * Ends the game
    */
-  public endGame(reason: GameOverReason, player?: IGamePlayer): void {
+  public endGame(reason: GameOverReason, player: IGamePlayer): void {
     
     if (this.gameStateService.gameOver) 
       return;
 
     this.gameStateService.gameOver = true;
-
-    if (!player)
-      player = this.gameStateService.activePlayer;
 
     // Notify clients about game over
     this.communicationService.notifyGameOver(
@@ -142,7 +142,7 @@ export class RulesService {
     // Save match data only if it's a valid game outcome (not during setup/initialization)      
     this.gameResultHandler.saveMatchResult(
       this.gameStateService.players,
-      player,
+      reason == GameOverReason.WIN ? player : this.gameStateService.players.find(p => p !== player),
       this.gameStateService.getDuration(),
       reason
     );

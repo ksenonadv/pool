@@ -75,7 +75,7 @@ export class CueService {
         isUnlocked: cue.price === 0 || playerStats && playerStats.points >= cue.price,
         isEquipped: cue.id === user.equippedCueId || user.equippedCueId === null && cue.price === 0
       })),
-      playerPoints: playerStats.points || 0,
+      playerPoints: playerStats ? playerStats.points : 0,
       pointsPerWin: POINTS_PER_WIN,
       pointsPerLoss: POINTS_PER_LOSS,
     };
