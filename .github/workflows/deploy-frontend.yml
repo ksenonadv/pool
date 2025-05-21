@@ -1,4 +1,4 @@
-name: Upload to S3
+name: Deploy Frontend
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
 
 jobs:
   deploy:
+    name: Deploy to AWS S3 Bucket
     runs-on: ubuntu-latest
 
     steps:

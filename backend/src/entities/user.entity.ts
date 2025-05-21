@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, BeforeInsert } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, BeforeInsert, ManyToOne } from 'typeorm';
 import { Cue } from './cue.entity';
 
 /**
@@ -52,13 +52,13 @@ export class User {
   /**
    * The currently equipped cue object that the user is using
    */
-  @OneToOne(() => Cue)
+  @ManyToOne(() => Cue)
   @JoinColumn({ name: 'equippedCueId' })
   cue: Cue;
 
   /**
    * ID reference to the cue that the user has currently equipped
    */
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: false })
   equippedCueId: string;
 }
