@@ -48,3 +48,15 @@ export type PlayerRankingsResult = {
   page: number;
   totalPages: number;
 };
+
+export enum PlayerRankingsSortBy {
+  winRate = 'winRate',
+  totalMatches = 'totalMatches',
+  efficiency = 'efficiency',
+  averageMatchDuration = 'averageMatchDuration',
+};
+
+export enum PlayerRankingsSortOrder {
+  ASC = 'ASC',
+  DESC = 'DESC'
+};

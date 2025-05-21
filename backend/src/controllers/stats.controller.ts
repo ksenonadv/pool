@@ -1,7 +1,8 @@
-import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
 import { StatsService } from '../services/stats.service';
 import { AccessTokenGuard } from 'src/guards/accessToken.guard';
 import { Request } from 'express';
+import { PlayerRankingsSortBy, PlayerRankingsSortOrder } from '@shared/stats.types';
 
 @Controller('stats')
 export class StatsController {
@@ -13,11 +14,25 @@ export class StatsController {
   @Get('rankings')
   async getPlayerRankings(
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10
+    @Query('limit') limit: number = 10,
+    @Query('sortBy') sortBy: PlayerRankingsSortBy = PlayerRankingsSortBy.winRate,
+    @Query('sortOrder') sortOrder: PlayerRankingsSortOrder = PlayerRankingsSortOrder.DESC
   ) {
+    
+    const isValidSortBy = Object.values(PlayerRankingsSortBy).includes(sortBy);
+    const isValidSortOrder = Object.values(PlayerRankingsSortOrder).includes(sortOrder);
+
+    if (!isValidSortBy || !isValidSortOrder) {
+      throw new BadRequestException(
+        `Invalid sorting parameters.`
+      );
+    }
+
     return this.statsService.getPlayerRankings(
-      page, 
-      limit
+      page,
+      limit,
+      sortBy,
+      sortOrder
     );
   }
 

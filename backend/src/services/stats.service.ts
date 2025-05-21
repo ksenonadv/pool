@@ -1,4 +1,4 @@
-import { Injectable, forwardRef, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from '../entities/match.entity';
@@ -7,7 +7,7 @@ import { PlayerStats } from '../entities/player-stats.entity';
 import { User } from '../entities/user.entity';
 import { IGamePlayer } from 'src/game/interfaces/game-player.interface';
 import { GameOverReason } from '@shared/socket.types';
-import { MatchHistoryResult, PlayerRankingsResult, UserStats } from '@shared/stats.types';
+import { MatchHistoryResult, PlayerRankingsResult, PlayerRankingsSortBy, PlayerRankingsSortOrder, UserStats } from '@shared/stats.types';
 import { POINTS_PER_LOSS, POINTS_PER_WIN } from 'src/config/cues.config';
 
 @Injectable()
@@ -144,11 +144,21 @@ export class StatsService {
   /**
    * Get player rankings
    */
-  async getPlayerRankings(page: number = 1, limit: number = 10): Promise<PlayerRankingsResult> {
-    
+  async getPlayerRankings(
+    page: number = 1, 
+    limit: number = 10,
+    sortBy: PlayerRankingsSortBy = PlayerRankingsSortBy.winRate,
+    sortOrder: PlayerRankingsSortOrder = PlayerRankingsSortOrder.DESC
+  ): Promise<PlayerRankingsResult> {
+
+    const order = this.createSortOrder(
+      sortBy, 
+      sortOrder
+    );
+        
     const [players, total] = await this.playerStatsRepository.findAndCount({
       relations: ['user'],
-      order: { winRate: 'DESC' },
+      order,
       take: limit,
       skip: (page - 1) * limit
     });    
@@ -174,6 +184,31 @@ export class StatsService {
         total / limit
       )
     };
+  }
+
+  /**
+   * Create sort order for player rankings
+   */
+  private createSortOrder(
+    sortBy: PlayerRankingsSortBy, 
+    sortOrder: PlayerRankingsSortOrder
+  ) {
+  
+    switch (sortBy) {
+      case 'winRate':
+      case 'totalMatches':
+      case 'averageMatchDuration': {
+        return {
+          [sortBy]: sortOrder
+        };
+      }
+      case 'efficiency': {
+        return {
+          totalBallsPocketed: sortOrder,
+          totalShotsTaken: sortOrder
+        };
+      }
+    }
   }
   
   /**

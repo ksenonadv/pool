@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 
-import { MatchHistoryResult, PlayerRankingsResult, UserStats } from "@shared/stats.types";
+import { MatchHistoryResult, PlayerRankingsResult, PlayerRankingsSortBy, PlayerRankingsSortOrder, UserStats } from "@shared/stats.types";
 import { ConfigService } from "./config.service";
 
 @Injectable({
@@ -25,10 +25,14 @@ export class StatsService {
       `${this.apiUrl}/player/history?page=${page}&limit=${limit}`
     );
   }
-
-  public getRankings(page: number = 1, limit: number = 25) {
+  public getRankings(
+    page: number = 1, 
+    limit: number = 25, 
+    sortBy: PlayerRankingsSortBy = PlayerRankingsSortBy.winRate, 
+    sortOrder: PlayerRankingsSortOrder = PlayerRankingsSortOrder.DESC
+  ) {
     return this.http.get<PlayerRankingsResult>(
-      `${this.apiUrl}/rankings?page=${page}&limit=${limit}`
+      `${this.apiUrl}/rankings?page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`
     );
   }
 

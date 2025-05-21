@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { SharedModule } from 'src/app/modules/shared.module';
 import { StatsService } from 'src/app/services/stats.service';
 import { PlayerRankItem } from './player-rank-item/player-rank-item.component';
-import { PlayerRankingsResult } from '@shared/stats.types';
+import { PlayerRankingsResult, PlayerRankingsSortBy, PlayerRankingsSortOrder } from '@shared/stats.types';
 
 @Component({
   selector: 'app-rankings',
@@ -17,8 +17,12 @@ export class RankingsComponent implements OnInit {
   
   public rankings: PlayerRankingsResult = undefined!;
   public loading = true;
+  
   public first = 0;
   public rows = 10;
+
+  public sortBy: PlayerRankingsSortBy = PlayerRankingsSortBy.winRate
+  public sortOrder: PlayerRankingsSortOrder = PlayerRankingsSortOrder.DESC;
 
   ngOnInit(): void {
     this.loadRankings();
@@ -28,7 +32,7 @@ export class RankingsComponent implements OnInit {
     
     this.loading = true;
     
-    this.statsService.getRankings(page, this.rows).subscribe({
+    this.statsService.getRankings(page, this.rows, this.sortBy, this.sortOrder).subscribe({
       next: (result) => {
         this.rankings = result;
         this.loading = false;
@@ -49,5 +53,27 @@ export class RankingsComponent implements OnInit {
     ) + 1;
     
     this.loadRankings(page);
+  }
+
+  public sort(column: PlayerRankingsSortBy): void {
+    
+    if (this.sortBy === column) {
+      this.sortOrder  = this.sortOrder == PlayerRankingsSortOrder.ASC ? PlayerRankingsSortOrder.DESC : PlayerRankingsSortOrder.ASC;
+    } 
+    else {
+      this.sortBy = column;
+      this.sortOrder = PlayerRankingsSortOrder.DESC;
+    }
+    
+    this.first = 0;
+    this.loadRankings(1);
+  }
+
+  public getSortIcon(column: PlayerRankingsSortBy): string {
+    
+    if (this.sortBy !== column)
+      return 'sort';
+
+    return this.sortOrder === PlayerRankingsSortOrder.ASC ? 'caret-up' : 'caret-down';
   }
 }
