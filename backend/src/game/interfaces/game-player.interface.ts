@@ -7,6 +7,7 @@ import { Socket } from 'socket.io';
 export interface IGamePlayer {
   name: string;
   avatar: string;
+  cue: string;
   userId: string;
   socket: Socket;
   ballGroup?: BallGroup;

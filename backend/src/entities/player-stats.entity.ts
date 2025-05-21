@@ -39,4 +39,7 @@ export class PlayerStats {
 
   @Column({ type: 'int', default: 0 })
   totalPlayTime: number;
+  
+  @Column({ type: 'int', default: 0 })
+  points: number;
 }

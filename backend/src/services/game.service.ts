@@ -9,6 +9,7 @@ import { StatsService } from "./stats.service";
 import { Game } from "src/game/game";
 import { IGamePlayer } from "src/game/interfaces/game-player.interface";
 import { GameFactoryService } from "src/game/services/game-factory.service";
+import { DEFAULT_CUES } from "src/config/cues.config";
 
 @Injectable()
 export class GameService {
@@ -262,16 +263,22 @@ export class GameService {
    */
   private async createGamePlayer(client: Socket): Promise<IGamePlayer> {
     try {
-      const user = await this.getUserFromSocket(client);
+      
+      const user = await this.getUserFromSocket(
+        client
+      );
       
       if (!user) {
-        throw new WsException('User not found');
+        throw new WsException(
+          'User not found'
+        );
       }
 
       return {
         userId: user.id,
         name: user.username,
         avatar: user.avatar,
+        cue: user.cue ? user.cue.image : DEFAULT_CUES[0].image,
         socket: client
       };
     } catch (error) {
@@ -283,14 +290,19 @@ export class GameService {
    * Get user data from a socket connection
    */
   private async getUserFromSocket(client: Socket) {
+    
     const userId = this.socketToUserId.get(client.id);
 
     if (!userId) 
       return null;
 
     return this.usersService.findById(userId);
-  }  private async createGame(player1: Socket, player2: Socket) {
-    try {      // Create game player objects
+  }  
+  
+  private async createGame(player1: Socket, player2: Socket) {
+    try {      
+      
+      // Create game player objects
       const gamePlayer1 = await this.createGamePlayer(player1);
       const gamePlayer2 = await this.createGamePlayer(player2);
       

@@ -8,6 +8,7 @@ import { User } from '../entities/user.entity';
 import { IGamePlayer } from 'src/game/interfaces/game-player.interface';
 import { GameOverReason } from '@shared/socket.types';
 import { MatchHistoryResult, PlayerRankingsResult, UserStats } from '@shared/stats.types';
+import { POINTS_PER_LOSS, POINTS_PER_WIN } from 'src/config/cues.config';
 
 @Injectable()
 export class StatsService {  constructor(
@@ -95,8 +96,7 @@ export class StatsService {  constructor(
     isWinner: boolean,
     durationSeconds: number
   ): Promise<void> {
-    
-    // Get existing stats or create new ones
+      // Get existing stats or create new ones
     let playerStats = await this.playerStatsRepository.findOne({ where: { 
         userId 
       } 
@@ -113,7 +113,8 @@ export class StatsService {  constructor(
         totalShotsTaken: 0,
         totalFouls: 0,
         averageMatchDuration: 0,
-        totalPlayTime: 0
+        totalPlayTime: 0,
+        points: 0
       });
     }
 
@@ -124,10 +125,13 @@ export class StatsService {  constructor(
     playerStats.totalFouls += matchStats.fouls;
     playerStats.totalPlayTime += durationSeconds;
 
-    if (isWinner)
+    if (isWinner) {
       playerStats.wins ++;
-    else
+      playerStats.points += POINTS_PER_WIN;
+    } else {
       playerStats.losses ++;
+      playerStats.points += POINTS_PER_LOSS;
+    }
 
     playerStats.winRate = playerStats.wins / playerStats.totalMatches;    
     playerStats.averageMatchDuration = playerStats.totalPlayTime / playerStats.totalMatches;
@@ -145,24 +149,23 @@ export class StatsService {  constructor(
       order: { winRate: 'DESC' },
       take: limit,
       skip: (page - 1) * limit
-    });
-
-    const formattedPlayers = players.map(stats => ({
-      userId: stats.userId,
-      username: stats.user.username,
-      avatar: stats.user.avatar,
-      totalMatches: stats.totalMatches,
-      wins: stats.wins,
-      losses: stats.losses,
-      winRate: stats.winRate,
-      totalBallsPocketed: stats.totalBallsPocketed,
-      totalShotsTaken: stats.totalShotsTaken,
-      efficiency: stats.totalBallsPocketed / (stats.totalShotsTaken || 1),
-      averageMatchDuration: stats.averageMatchDuration
-    }));
-
+    });    
+    
     return {
-      players: formattedPlayers,
+      players: players.map(stats => ({
+        userId: stats.userId,
+        username: stats.user.username,
+        avatar: stats.user.avatar,
+        totalMatches: stats.totalMatches,
+        wins: stats.wins,
+        losses: stats.losses,
+        winRate: stats.winRate,
+        totalBallsPocketed: stats.totalBallsPocketed,
+        totalShotsTaken: stats.totalShotsTaken,
+        efficiency: stats.totalBallsPocketed / (stats.totalShotsTaken || 1),
+        averageMatchDuration: stats.averageMatchDuration,
+        points: stats.points
+      })),
       total,
       page,
       totalPages: Math.ceil(
@@ -230,8 +233,8 @@ export class StatsService {  constructor(
       where: { 
         userId 
       }
-    });
-
+    });   
+    
     if (!playerStats) {
       return {
         totalMatches: 0,
@@ -243,7 +246,8 @@ export class StatsService {  constructor(
         totalFouls: 0,
         averageMatchDuration: 0,
         efficiency: 0,
-        totalPlayTime: 0
+        totalPlayTime: 0,
+        points: 0
       };
     }
 
@@ -257,7 +261,8 @@ export class StatsService {  constructor(
       totalFouls: playerStats.totalFouls,
       efficiency: playerStats.totalBallsPocketed / (playerStats.totalShotsTaken || 1),
       averageMatchDuration: playerStats.averageMatchDuration,
-      totalPlayTime: playerStats.totalPlayTime
+      totalPlayTime: playerStats.totalPlayTime,
+      points: playerStats.points
     };
   }
 }

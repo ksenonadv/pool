@@ -77,6 +77,7 @@ export class CommunicationService {
         data: this.gameStateService.players.map(p => ({
           name: p.name,
           avatar: p.avatar,
+          cue: p.cue,
           userId: p.userId
         }))
       }

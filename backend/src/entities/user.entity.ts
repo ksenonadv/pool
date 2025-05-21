@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, BeforeInsert } from 'typeorm';
+import { Cue } from './cue.entity';
 
 @Entity()
 export class User {
+  
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -19,4 +21,11 @@ export class User {
 
   @Column({ nullable: true })
   refreshToken: string;
+
+  @OneToOne(() => Cue)
+  @JoinColumn({ name: 'equippedCueId' })
+  cue: Cue;
+
+  @Column({ nullable: true })
+  equippedCueId: string;
 }

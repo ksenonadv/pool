@@ -46,6 +46,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
   public isMuted: boolean = false;
 
+  private activePlayer: SetPlayersEventData[0] = undefined!;
+
   ngOnInit(): void {
     
     // Initialize renderer
@@ -74,6 +76,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.gameState.canShoot$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(canShoot => {
         this.canShoot = canShoot;
+        this.activePlayer = this.players.find(player => canShoot ? player.userId === this.userId : player.userId !== this.userId)!;
         this.cdr.detectChanges();
       });
       
@@ -114,7 +117,10 @@ export class GameComponent implements OnInit, OnDestroy {
     
     this.renderer.render(
       this.gameState.balls,
-      this.gameState.cueData,
+      { 
+        ... this.gameState.cueData!, 
+        cue: this.activePlayer.cue 
+      },
       this.gameState.ballsMoving
     );
   }

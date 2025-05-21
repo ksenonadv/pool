@@ -16,7 +16,10 @@ export const GAME_IMAGES_ASSETS = {
   'ball_13': 'assets/images/game/ball_13.png',
   'ball_14': 'assets/images/game/ball_14.png',
   'ball_15': 'assets/images/game/ball_15.png',
-  'cue': 'assets/images/game/cue.png'
+  'cue.png': 'assets/images/game/cue.png',
+  'cue2.png': 'assets/images/game/cue2.png',
+  'cue3.png': 'assets/images/game/cue3.png',
+  'cue4.png': 'assets/images/game/cue4.png',
 };
 
 export const GAME_AUDIO_ASSETS = {

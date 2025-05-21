@@ -33,10 +33,14 @@ export const routes: Routes = [
     path: 'history',
     canActivate: [AuthGuard],
     loadComponent: () => import('./components/match-history/match-history.component').then(m => m.MatchHistoryComponent),
-  },
-  {
+  },  {
     path: 'rankings',
     loadComponent: () => import('./components/rankings/rankings.component').then(m => m.RankingsComponent),
+  },
+  {
+    path: 'cue-shop',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./components/cue-shop/cue-shop.component').then(m => m.CueShopComponent),
   },
   {
     path: '**',

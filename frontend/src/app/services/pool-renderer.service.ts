@@ -51,8 +51,10 @@ export class PoolRendererService {
     }
   }
 
-  render(balls: Ball[], cueData: SyncCueEventData | undefined, ballsMoving: boolean): void {
-    if (!this.ctx || !this.canvas) return;
+  render(balls: Ball[], cueData: SyncCueEventData & { cue: string } | undefined, ballsMoving: boolean): void {
+    
+    if (!this.ctx || !this.canvas) 
+      return;
     
     // Clear canvas
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -104,10 +106,11 @@ export class PoolRendererService {
     this.ctx.restore();
   }
   
-  private drawCue(cueBall: Ball, cueData: SyncCueEventData): void {
-    if (!this.ctx || !this.assets['cue']) return;
+  private drawCue(cueBall: Ball, cueData: SyncCueEventData & { cue: string }): void {
     
-    const img = this.assets['cue'];
+    if (!this.ctx || !this.assets[cueData.cue]) return;
+    
+    const img = this.assets[cueData.cue];
     const { position } = cueBall;
     
     // Calculate angle from cue ball to mouse position

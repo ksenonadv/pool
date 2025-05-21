@@ -78,6 +78,7 @@ export type SetPlayersEventData = Array<{
   userId: string;
   name: string;
   avatar: string;
+  cue: string;
   group?: BallGroup;
 }>;
 

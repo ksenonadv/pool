@@ -9,6 +9,7 @@ export type UserStats = {
   efficiency: number;
   averageMatchDuration: number;
   totalPlayTime?: number;
+  points?: number;
 };
 
 export type MatchHistory = {

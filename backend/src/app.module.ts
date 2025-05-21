@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth.module';
 import { UsersModule } from './modules/users.module';
 import { GameModule } from './modules/game.module';
 import { StatsModule } from './modules/stats.module';
+import { CueModule } from './modules/cue.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { StatsModule } from './modules/stats.module';
     UsersModule,
     AuthModule,
     GameModule,
-    StatsModule
+    StatsModule,
+    CueModule
   ],
   controllers: [],
   providers: [AppService],

@@ -2,23 +2,40 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
+import { Cue } from '../entities/cue.entity';
 import { ChangePasswordDto } from 'src/dto/user.dto';
 import * as argon2 from 'argon2';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
+  @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Cue)
+    private readonly cueRepository: Repository<Cue>,
   ) {}
-
   async create(createUserDto: Partial<User>): Promise<User> {
-    const user = this.userRepository.create(createUserDto);
+    
+    // Find default cue (the one with price 0)
+    const defaultCue = await this.cueRepository.findOne({
+      where: { price: 0 },
+      order: { name: 'ASC' }
+    });
+
+    // Create user with default cue
+    const user = this.userRepository.create({
+      ...createUserDto,
+      equippedCueId: defaultCue?.id
+    });
+    
     return this.userRepository.save(user);
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ id });
+    return this.userRepository.findOne({
+      where: { id },
+      relations: ['cue'],
+    });
   }
 
   async findByUsername(username: string): Promise<User | null> {
