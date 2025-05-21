@@ -39,12 +39,11 @@ jobs:
         run: npm run build -- --configuration=production
 
       - name: Sync to S3
-        uses: Noelware/s3-action@master
+        uses: jakejarvis/s3-sync-action@master
         with:
-          directories: |
-              ./frontend/dist/frontend/browser
-
-          access-key-id: ${{ secrets.AWS_KEY_ID }}
-          secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          bucket: ${{ secrets.AWS_BUCKET }}
-          object-acl: ''
+          args: --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SOURCE_DIR: 'frontend/dist/frontend/browser'
