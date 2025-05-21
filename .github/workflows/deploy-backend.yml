@@ -8,8 +8,8 @@ on:
       - '.github/workflows/deploy-backend.yml'
 
 jobs:
-  build-and-push:
-    name: Build and Push to ECR
+  deploy:
+    name: Deploy to AWS ECS
     runs-on: ubuntu-latest
 
     steps:
@@ -37,3 +37,13 @@ jobs:
           docker build . -t $ECR_REPOSITORY:$IMAGE_TAG -f backend/Dockerfile
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy ECS service
+        env:
+          CLUSTER_NAME=${{ secrets.ECS_CLUSTER_NAME }}
+          SERVICE_NAME=${{ secrets.ECS_SERVICE_NAME }}
+        run: |
+          aws ecs update-service \
+            --cluster $CLUSTER_NAME \
+            --service $SERVICE_NAME \
+            --force-new-deployment
