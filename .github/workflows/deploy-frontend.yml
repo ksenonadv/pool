@@ -49,7 +49,7 @@ jobs:
           SOURCE_DIR: 'frontend/dist/frontend/browser'
 
       - name: Invalidate CloudFront
-        uses: jakejarvis/cloudfront-invalidate-action@master
+        uses: docker://rewindio/github-action-cloudfront-invalidate
         with:
           distribution: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
           paths: '/*'
