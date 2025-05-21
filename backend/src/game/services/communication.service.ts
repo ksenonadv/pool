@@ -53,9 +53,15 @@ export class CommunicationService {
     };
     
     if (client) {
-      client.emit(SocketEvent.CHAT_MESSAGE, chatMessage);
+      client.emit(
+        SocketEvent.CHAT_MESSAGE, 
+        chatMessage
+      );
     } else {
-      this.broadcast(SocketEvent.CHAT_MESSAGE, chatMessage);
+      this.broadcast(
+        SocketEvent.CHAT_MESSAGE, 
+        chatMessage
+      );
     }
   }
 
@@ -88,6 +94,7 @@ export class CommunicationService {
    * Notifies about turn change
    */
   public notifyTurnChange(player: IGamePlayer): void {
+    
     // Tell active player it's their turn
     player.socket.emit(
       SocketEvent.SERVER_GAME_EVENT,
@@ -97,20 +104,8 @@ export class CommunicationService {
       }
     );
     
-    this.sendMessage(
-      `It is your turn.${player.ballGroup ? ` You are using ${player.ballGroup}.` : ''}`,
-      player.socket
-    );
-    
     // Tell other player it's not their turn
-    const other = this.gameStateService.otherPlayer;
-    
-    this.sendMessage(
-      `It is ${player.name}'s turn.${player.ballGroup ? ` They are ${player.ballGroup}.` : ''}`,
-      other.socket
-    );
-    
-    other.socket.emit(
+    this.gameStateService.otherPlayer.socket.emit(
       SocketEvent.SERVER_GAME_EVENT,
       {
         event: ServerEvent.SET_CAN_SHOOT,
