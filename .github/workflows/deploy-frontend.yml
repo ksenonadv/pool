@@ -39,9 +39,12 @@ jobs:
         run: npm run build -- --configuration=production
 
       - name: Sync to S3
-        uses: parth-paradkar/s3-upload-action-without-acl@master
+        uses: Noelware/s3-action@2
         with:
-          aws_key_id: ${{ secrets.AWS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_bucket: ${{ secrets.AWS_BUCKET }}
-          source_dir: 'frontend/dist/frontend/browser'
+          directories: |
+              ./frontend/dist/frontend/browser
+
+          access-key-id: ${{ secrets.AWS_KEY_ID }}
+          secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          bucket: ${{ secrets.AWS_BUCKET }}
+          object-acl: ''
