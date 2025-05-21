@@ -34,6 +34,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: this.configService.get('DB_USERNAME', 'postgres'),
       password: this.configService.get('DB_PASSWORD', 'postgres'),
       database: this.configService.get('DB_NAME', 'pool'),
+      ssl: this.configService.get('DB_SSL', false),
       entities: [User, Match, MatchPlayer, PlayerStats, Cue],
       synchronize: true,
       logging: false
