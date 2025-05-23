@@ -58,8 +58,7 @@ export class GameStateManagerService {
         break;
       
       case WorkerProcessMessageType.BALL_POCKETED: {
-        const { ballNumber } = message.payload;
-        this.rulesService.handleBallPocketed(ballNumber);
+        this.rulesService.handleBallPocketed(message.payload.ballNumber);
         break;
       }
       
@@ -69,8 +68,11 @@ export class GameStateManagerService {
         break;
 
       case WorkerProcessMessageType.PLAY_SOUND:
-        const { sound } = message.payload;
-        this.communicationService.playSound(sound);
+        this.communicationService.playSound(message.payload.sound);
+        break;
+
+      case WorkerProcessMessageType.SYNC_GUIDE_LINE:
+        this.communicationService.sendGuideLineSync(message.payload);
         break;
     }
   }
@@ -100,6 +102,7 @@ export class GameStateManagerService {
         break;  
       }
       case ClientGameEvent.SYNC_CUE: {
+        this.physicsService.computeGuideLine(payload.mouseX, payload.mouseY);
         this.communicationService.notifyCueSync(payload, this.gameStateService.otherPlayer);
         break;
       }

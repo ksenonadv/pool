@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Ball, BallPocketedEventData, ClientGameEvent, GameOverEventData, ServerEvent, ServerGameEventData, SetBallGroupEventData, SetPlayersEventData, SocketEvent, SyncCueEventData } from '@shared/socket.types';
+import { Ball, BallPocketedEventData, ClientGameEvent, GameOverEventData, ServerEvent, ServerGameEventData, SetBallGroupEventData, SetPlayersEventData, SocketEvent, SyncCueEventData, SyncGuideLineData } from '@shared/socket.types';
 import { PoolSocketService } from './pool-socket.service';
 import { BallGroup } from '@shared/game.types';
 import { takeUntil } from 'rxjs/operators';
@@ -30,6 +30,7 @@ export class GameStateService {
   private _canShoot = new BehaviorSubject<boolean>(false);
   private _ballsMoving = new BehaviorSubject<boolean>(false);
   private _cueData = new BehaviorSubject<SyncCueEventData | undefined>(undefined);
+  private _guideLineData = new BehaviorSubject<SyncGuideLineData | undefined>(undefined);
   private _stripesPocketed = new BehaviorSubject<number[]>([]);
   private _solidsPocketed = new BehaviorSubject<number[]>([]);
   private _gameOver = new Subject<GameOverEventData>();
@@ -40,6 +41,7 @@ export class GameStateService {
   public readonly canShoot$ = this._canShoot.asObservable();
   public readonly ballsMoving$ = this._ballsMoving.asObservable();
   public readonly cueData$ = this._cueData.asObservable();
+  public readonly guideLineData$ = this._guideLineData.asObservable();
   public readonly stripesPocketed$ = this._stripesPocketed.asObservable();
   public readonly solidsPocketed$ = this._solidsPocketed.asObservable();
   public readonly gameOver$ = this._gameOver.asObservable();
@@ -96,6 +98,7 @@ export class GameStateService {
 
       case ServerEvent.MOVEMENT_START:
         this._ballsMoving.next(true);
+        this._guideLineData.next(undefined)
         break;
 
       case ServerEvent.MOVEMENT_END:
@@ -116,6 +119,10 @@ export class GameStateService {
 
       case ServerEvent.PLAY_SOUND:
         this.playSound(payload as string);
+        break;
+
+      case ServerEvent.SYNC_GUIDE_LINE:
+        this._guideLineData.next(payload as SyncGuideLineData);
         break;
     }
   }
@@ -303,5 +310,9 @@ export class GameStateService {
    */
   public get cueData(): SyncCueEventData | undefined {
     return this._cueData.value;
+  }
+
+  public get guideLineData(): SyncGuideLineData | undefined {
+    return this._guideLineData.value;
   }
 }

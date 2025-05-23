@@ -1,16 +1,17 @@
-import { Ball } from '@shared/socket.types';
+import { Ball, SyncGuideLineData } from '@shared/socket.types';
 
 export const enum MainProcessMessageType {
   INIT = 'INIT',
   SHOOT = 'SHOOT',
-  SET_ACTIVE_PLAYER = 'SET_ACTIVE_PLAYER',
-  STOP = 'STOP'
+  STOP = 'STOP',
+  COMPUTE_GUIDE_LINE = 'COMPUTE_GUIDE_LINE'
 };
 
 export type MainProcessMesssage =
   | { type: MainProcessMessageType.INIT }
   | { type: MainProcessMessageType.SHOOT, payload: { power: number, mouseX: number, mouseY: number } }
-  | { type: MainProcessMessageType.STOP };
+  | { type: MainProcessMessageType.STOP }
+  | { type: MainProcessMessageType.COMPUTE_GUIDE_LINE, payload: { mouseX: number; mouseY: number } };
 
 export const enum WorkerProcessMessageType {
   SYNC_BALLS = 'SYNC_BALLS',
@@ -21,6 +22,7 @@ export const enum WorkerProcessMessageType {
   BALL_POCKETED = 'BALL_POCKETED',
   CUE_BALL_POCKETED = 'CUE_BALL_POCKETED',
   PLAY_SOUND = 'PLAY_SOUND',
+  SYNC_GUIDE_LINE = 'SYNC_GUIDE_LINE',
 };
 
 export type WorkerProcessMessage = 
@@ -30,4 +32,5 @@ export type WorkerProcessMessage =
   | { type: WorkerProcessMessageType.MOVEMENT_END }
   | { type: WorkerProcessMessageType.BALL_POCKETED, payload: { ballNumber: number }  }
   | { type: WorkerProcessMessageType.CUE_BALL_POCKETED }
-  | { type: WorkerProcessMessageType.PLAY_SOUND, payload: { sound: string } };
+  | { type: WorkerProcessMessageType.PLAY_SOUND, payload: { sound: string } }
+  | { type: WorkerProcessMessageType.SYNC_GUIDE_LINE, payload: SyncGuideLineData };

@@ -83,6 +83,9 @@ export enum ServerEvent {
   
   /** Triggers a sound effect */
   PLAY_SOUND = 'play-sound',
+
+  /** Sync guide line segments data */
+  SYNC_GUIDE_LINE = 'sync-guide-line',
 };
 
 /**
@@ -140,6 +143,17 @@ export type SyncCueEventData = {
   /** Power level of the shot (0-1) */
   power: number;
 };
+
+export type SyncGuideLineData = Array<{
+
+  /** Start coordonate of the line */
+  from: { x: number; y: number };
+
+  /** End coordonate of the line */
+  to: { x: number; y: number };
+
+  ball?: boolean;
+}>;
 
 /**
  * Data structure for a ball on the pool table.

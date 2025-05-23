@@ -107,13 +107,8 @@ parentPort.on('message', (message: MainProcessMesssage) => {
   const handler = messageHandlerRegistry.get(type);
   
   if (handler) {
-    try {
-      
-      const payload = type === MainProcessMessageType.SHOOT 
-        ? (message as any).payload 
-        : undefined;
-                  
-      handler(payload);
+    try {                  
+      handler((message as any).payload);
     } catch (error) {
       console.error(
         `Error handling message type ${type}:`, 

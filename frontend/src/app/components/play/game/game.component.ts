@@ -139,7 +139,7 @@ export class GameComponent implements OnInit, OnDestroy {
    */
   private draw(): void {
     if (this.state !== ConnectionState.InGame) {
-      this.renderer.render([], undefined, false);
+      this.renderer.render([], undefined, undefined, false);
       return;
     }
     
@@ -149,6 +149,7 @@ export class GameComponent implements OnInit, OnDestroy {
         ... this.gameState.cueData!, 
         cue: this.activePlayer.cue 
       },
+      this.gameState.guideLineData!,
       this.gameState.ballsMoving
     );
   }

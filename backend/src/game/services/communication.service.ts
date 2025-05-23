@@ -8,7 +8,9 @@ import {
   NameAndAvatar, 
   ServerEvent, 
   SetBallGroupEventData, 
-  SocketEvent 
+  SocketEvent, 
+  SyncCueEventData,
+  SyncGuideLineData
 } from '@shared/socket.types';
 import { BallGroup } from '@shared/game.types';
 import { GameStateService } from './game-state.service';
@@ -219,11 +221,25 @@ export class CommunicationService {
   /**
    * Notifies about cue synchronization
    */
-  public notifyCueSync(payload: any, target: IGamePlayer): void {
+  public notifyCueSync(payload: SyncCueEventData, target: IGamePlayer): void {
     target.socket.emit(
       SocketEvent.SERVER_GAME_EVENT,
       {
         event: ServerEvent.SYNC_CUE,
+        data: payload
+      }
+    );
+  }
+
+  /**
+   * Synchronizes the guide line segments data
+   * @param payload SyncGuideLineData
+   */
+  public sendGuideLineSync(payload: SyncGuideLineData): void {
+    this.broadcast(
+      SocketEvent.SERVER_GAME_EVENT,
+      {
+        event: ServerEvent.SYNC_GUIDE_LINE,
         data: payload
       }
     );

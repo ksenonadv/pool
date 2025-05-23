@@ -34,7 +34,9 @@ export class PhysicsService {
    * Sends a shoot event to the physics worker
    */
   public shoot(payload: ShootEventData): void {
-    if (!this.worker) return;
+    
+    if (!this.worker) 
+      return;
     
     this.worker.postMessage({
       type: MainProcessMessageType.SHOOT,
@@ -42,6 +44,25 @@ export class PhysicsService {
     });
   }
   
+  /**
+   * Calls the worker compute guide line function
+   * @param mouseX mouse X position
+   * @param mouseY mouse Y position
+   */
+  public computeGuideLine(mouseX: number, mouseY: number): void {
+    
+    if (!this.worker) 
+      return;
+    
+    this.worker.postMessage({
+      type: MainProcessMessageType.COMPUTE_GUIDE_LINE,
+      payload: {
+        mouseX,
+        mouseY
+      }
+    });
+  }
+
   /**
    * Cleans up the worker thread
    */

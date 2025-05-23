@@ -1,10 +1,15 @@
-import { Body, Composite, Engine, Events, Pair, Vector, World } from "matter-js";
+import { Body, Composite, Engine, Events, Pair, Query, Vector, World } from "matter-js";
 import { parentPort } from 'worker_threads';
 import { createCueBall, createPoolTableEngineEntities } from "./bodies";
-import { FRAME_RATE } from "../../config/game.config";
+import { BALL_RADIUS, FRAME_RATE, TABLE_HEIGHT, TABLE_WIDTH } from "../../config/game.config";
 import { MainProcessMessageType, WorkerProcessMessageType } from "src/game/ipc.types";
-import { ShootEventData } from "@shared/socket.types";
+import { ShootEventData, SyncGuideLineData } from "@shared/socket.types";
 import { MessageHandler, SupportsMessages } from "./message-handlers";
+import { raycast } from "./guide-line";
+
+type CollisionExtended = Matter.Collision & {
+  body: Body
+};
 
 @SupportsMessages()
 class PoolGameWorker {
@@ -104,6 +109,105 @@ class PoolGameWorker {
     }
   }
 
+  @MessageHandler<Partial<ShootEventData>>(MainProcessMessageType.COMPUTE_GUIDE_LINE)
+  private computeGuideLine(payload: Partial<ShootEventData>): void {
+    
+    const cue_ball = Array.from(this.balls).find(ball => ball.ballNumber === 0);
+    
+    if (!cue_ball) 
+      return;
+
+    const mouse = Vector.create(
+      payload.mouseX,
+      payload.mouseY
+    );
+
+    const direction = Vector.normalise(Vector.sub(mouse, cue_ball.position));
+
+    const maxBounces = 2;
+    const ray_length = Math.max(TABLE_WIDTH, TABLE_HEIGHT) * 2;
+
+    const bodies = this.engine.world.bodies.filter(body =>
+      body != cue_ball
+    );
+
+    const segments: SyncGuideLineData = [];
+
+    const trace = (start: Matter.Vector, dir: Matter.Vector, bouncesLeft: number) => {
+      
+      if (bouncesLeft < 1)
+        return;
+
+      const data = raycast(
+        bodies, 
+        start, 
+        dir, 
+        ray_length
+      );
+      
+      if (!data) {
+        return segments.push({
+          from: start,
+          to: Vector.add(
+            start, Vector.mult(dir, ray_length))
+        });
+      }
+      
+      segments.push({
+        from: start,
+        to: data.point
+      });
+
+      // End if we hit a pocket.
+      if (data.body.label == 'pocket')
+        return;
+
+      if (data.body.label == 'wall') {
+        
+        // Offset the start point slightly along the reflected direction to avoid immediate self-collision
+        const reflected = Vector.sub(dir, Vector.mult(
+          data.normal, 
+          2 * Vector.dot(dir, data.normal)
+        ));
+
+        const offset = Vector.mult(reflected, 2);
+        const start = Vector.add(data.point, offset);
+
+        return trace(
+          start, 
+          reflected, 
+          bouncesLeft - 1
+        );
+      }
+
+      // Draw where the ball would go.
+
+      const ball_travel = Vector.mult(
+        Vector.mult(data.normal, -1), 
+        BALL_RADIUS
+      );
+
+      return segments.push({
+        from: data.body.position,
+        to: Vector.add(
+          data.body.position, 
+          ball_travel
+        ),
+        ball: true
+      });
+    
+    };
+
+    trace(
+      cue_ball.position, 
+      direction, 
+      maxBounces
+    );
+
+    this.sendMessage(WorkerProcessMessageType.SYNC_GUIDE_LINE, segments);
+  }
+
+
   /**
    * Update physics simulation
    */
@@ -125,7 +229,7 @@ class PoolGameWorker {
     if (movingBalls.length > 0) {
       this.sendBallPositions(
         WorkerProcessMessageType.SYNC_MOVING_BALLS,
-        movingBalls
+        movingBalls,
       );
     } 
     
@@ -146,7 +250,7 @@ class PoolGameWorker {
    * Check if a ball is moving
    */
   private isBallMoving(ball: Body): boolean {
-    return Vector.magnitude(ball.velocity) > 0.1;
+    return Vector.magnitude(ball.velocity) > 0.01;
   }
 
   /**

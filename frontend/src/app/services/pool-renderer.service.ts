@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MIN_POWER } from '@shared/game.types';
-import { Ball, SyncCueEventData } from '@shared/socket.types';
+import { Ball, SyncCueEventData, SyncGuideLineData } from '@shared/socket.types';
 import { BALL_SIZE, CUE_SIZE, TABLE_PADDING } from '../constants/table.constants';
 import { GAME_IMAGES_ASSETS } from '../constants/assets.constants';
 
@@ -51,7 +51,7 @@ export class PoolRendererService {
     }
   }
 
-  render(balls: Ball[], cueData: SyncCueEventData & { cue: string } | undefined, ballsMoving: boolean): void {
+  render(balls: Ball[], cueData: SyncCueEventData & { cue: string } | undefined, guideLineData: SyncGuideLineData | undefined, ballsMoving: boolean): void {
     
     if (!this.ctx || !this.canvas) 
       return;
@@ -72,6 +72,22 @@ export class PoolRendererService {
     if (cueBall && cueData && !ballsMoving) {
       this.drawCue(cueBall, cueData);
     }
+
+    if (guideLineData) {
+      guideLineData.forEach(segment => {
+        
+        this.ctx!.beginPath();
+        this.ctx!.moveTo(segment.from.x, segment.from.y);
+        this.ctx!.lineTo(segment.to.x, segment.to.y);
+
+        this.ctx!.strokeStyle = segment.ball ? 'rgba(0, 255, 0, 0.75)' : 'rgba(255, 255, 255, 0.5)';
+
+        this.ctx!.lineWidth = 2;
+        this.ctx!.stroke();
+        this.ctx!.closePath();
+      });
+    }
+
   }
   
   private drawTable(): void {
