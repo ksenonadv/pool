@@ -73,7 +73,7 @@ export class PoolRendererService {
       this.drawCue(cueBall, cueData);
     }
 
-    if (guideLineData) {
+    if (guideLineData && !ballsMoving) {
       guideLineData.forEach(segment => {
         
         this.ctx!.beginPath();
