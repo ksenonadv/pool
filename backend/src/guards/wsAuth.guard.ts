@@ -32,6 +32,7 @@ export class WsJwtGuard implements CanActivate {
         secret: this.configService.get<string>(
           'JWT_ACCESS_SECRET'
         ),
+        ignoreExpiration: true
       });
 
       client['user'] = payload;
