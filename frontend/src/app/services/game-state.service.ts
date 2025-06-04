@@ -98,7 +98,7 @@ export class GameStateService {
 
       case ServerEvent.MOVEMENT_START:
         this._ballsMoving.next(true);
-        this._guideLineData.next(undefined)
+        this._guideLineData.next(undefined);
         break;
 
       case ServerEvent.MOVEMENT_END:
