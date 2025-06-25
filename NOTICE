@@ -1,0 +1,45 @@
+NOTICE
+
+This project includes the following third-party open-source libraries:
+
+---
+
+Tailwind CSS  
+https://tailwindcss.com  
+License: MIT  
+Copyright (c) Tailwind Labs, Inc.
+
+---
+
+PrimeNG  
+https://www.primefaces.org/primeng/  
+License: MIT  
+Copyright (c) PrimeTek
+
+Note: This project uses only the open-source components of PrimeNG.  
+Commercial themes and components from PrimeTek are not included.
+
+---
+
+Matter.js  
+https://brm.io/matter-js/  
+License: MIT  
+Copyright (c) 2014 Liam Brummitt
+
+---
+
+Angular  
+https://angular.io  
+License: MIT  
+Copyright (c) Google LLC
+
+---
+
+NestJS  
+https://nestjs.com  
+License: MIT  
+Copyright (c) 2017-2025 Kamil Myśliwiec
+
+---
+
+This software is licensed under the MIT License. See the LICENSE file for more information.
