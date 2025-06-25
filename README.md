@@ -2,7 +2,7 @@
 
 A modern 8-ball pool game web application built with Angular, NestJS framework and Matter.JS library. 
 
-Hosted version available at [https://cue-frenzy.cristea.dev/](https://https://cue-frenzy.cristea.dev/).
+Hosted version available at [https://cue-frenzy.cristea.dev/](https://cue-frenzy.cristea.dev/).
 
 ## Overview
 
